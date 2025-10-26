@@ -12,6 +12,7 @@ body {
   height: 100vh;
 }
 
+/* ===== LOGIN CONTAINER ===== */
 .login-container {
   background: #fff;
   padding: 2rem 3rem;
@@ -97,7 +98,7 @@ header h1 {
 
 /* ===== HORIZONTAL MENU BAR ===== */
 .menu-grid {
-  display: flex; /* change from grid to flex */
+  display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: nowrap;
@@ -105,7 +106,7 @@ header h1 {
   white-space: nowrap;
   background: #f1f5fb;
   padding: 1rem 0.5rem;
-  margin-top: 70px; /* space for fixed header */
+  margin-top: 70px;
   border-bottom: 1px solid #e0e0e0;
   gap: 1rem;
 }
@@ -128,13 +129,6 @@ header h1 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.12);
 }
 
-/* ===== MAIN CONTENT BELOW MENU ===== */
-.menu-page main {
-  padding: 2rem;
-  text-align: center;
-  color: #333;
-}
-
 /* ===== ACTIVE MENU ITEM ===== */
 .menu-card.active {
   background: #0077ff;
@@ -148,18 +142,13 @@ header h1 {
   box-shadow: 0 6px 16px rgba(0, 119, 255, 0.4);
 }
 
-
-
-#logoutBtn {
-  background: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
+/* ===== MAIN CONTENT ===== */
+.menu-page main {
+  padding: 2rem;
+  text-align: center;
+  color: #333;
 }
 
-#logoutBtn:hover {
-  background: #cc0000;
+.menu-page {
+  padding-top: 70px;
 }
