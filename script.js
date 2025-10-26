@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // clear previous errors
       usernameError.textContent = '';
       passwordError.textContent = '';
 
@@ -21,12 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById('password').value.trim();
 
       if (!username || !password) {
-        alert('Please enter both username and password.');
+        if (!username) usernameError.textContent = 'Username is required';
+        if (!password) passwordError.textContent = 'Password is required';
         return;
       }
 
       try {
-        // send POST request to webhook
         const response = await fetch('https://n8n.srv850749.hstgr.cloud/webhook/bf58870b-841f-415d-8d58-8522bfc1ca6e', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -44,9 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
         */
 
         if (data.status === 'Success') {
+          // save info to localStorage
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('userName', data.username);
           localStorage.setItem('userRole', data.role);
+
+          // redirect to menu
           window.location.href = 'menu.html';
         } else if (data.status === 'Wrong Username') {
           usernameError.textContent = 'Incorrect Username';
@@ -76,12 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'index.html';
     }
 
-    // show username and role
-    const userInfo = document.getElementById('userInfo');
-    if (userInfo) {
+    // show username and role in topbar
+    const topbar = document.querySelector('.topbar .brand');
+    if (topbar) {
       const name = localStorage.getItem('userName') || '';
       const role = localStorage.getItem('userRole') || '';
-      userInfo.innerHTML = `Welcome, ${name} <br/> ${role}`;
+      topbar.innerHTML = `Welcome, ${name} <br/> ${role}`;
     }
 
     // restore active module
@@ -91,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el) setActive(el, false);
     }
 
-    // click handler
+    // menu click handler
     menuItems.forEach(item => item.addEventListener('click', () => {
       setActive(item, true);
     }));
@@ -108,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // set active menu function
+  // --- helper function to set active menu ---
   function setActive(element, save) {
     menuItems.forEach(i => i.classList.remove('active'));
     element.classList.add('active');
