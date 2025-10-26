@@ -45,16 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
         */
 
        if (data.status === 'Success') {
-  // hide error messages
   usernameError.style.display = 'none';
   passwordError.style.display = 'none';
 
-  // save info to localStorage
   localStorage.setItem('isLoggedIn', 'true');
   localStorage.setItem('userName', data.username);
   localStorage.setItem('userRole', data.role);
 
-  // redirect to menu
   window.location.href = 'menu.html';
 } else if (data.status === 'Wrong Username') {
   usernameError.textContent = 'Incorrect Username';
@@ -63,11 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
   passwordError.textContent = 'Incorrect Password';
   passwordError.style.display = 'block';
 } else if (data.status === 'Wrong Password') {
+  usernameError.style.display = 'none'; // hide username error
   passwordError.textContent = 'Incorrect Password';
   passwordError.style.display = 'block';
-} else {
-  alert('Unexpected response from server.');
 }
+
 
 
       } catch (err) {
