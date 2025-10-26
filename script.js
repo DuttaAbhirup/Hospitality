@@ -40,3 +40,19 @@ document.addEventListener('DOMContentLoaded', () => {
 function openModule(module) {
   alert(`Opening ${module} module... (To be implemented)`);
 }
+
+// Highlight active menu item
+if (document.body.classList.contains('menu-page')) {
+  const menuItems = document.querySelectorAll('.menu-card');
+
+  menuItems.forEach(item => {
+    item.addEventListener('click', () => {
+      menuItems.forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+
+      // You can handle module loading here later
+      console.log(`Selected module: ${item.textContent.trim()}`);
+    });
+  });
+}
+
