@@ -7,20 +7,24 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="menu-page">
-  <header>
+  <header class="topbar">
     <h1>Hospitality Suite</h1>
     <button id="logoutBtn">Logout</button>
   </header>
 
-  <main class="menu-grid">
-    <div class="menu-card" onclick="openModule('booking')">🏨 Booking Manager</div>
-    <div class="menu-card" onclick="openModule('housekeeping')">🧹 Housekeeping Tracker</div>
-    <div class="menu-card" onclick="openModule('vendor')">📦 Vendor Management</div>
-    <div class="menu-card" onclick="openModule('inventory')">📋 Inventory Management</div>
-    <div class="menu-card" onclick="openModule('kitchen')">🍽 Kitchen Order Management</div>
-    <div class="menu-card" onclick="openModule('payments')">💳 Payments & Refund Tracker</div>
-    <div class="menu-card" onclick="openModule('property')">🏠 Property Management</div>
-    <div class="menu-card" onclick="openModule('dashboard')">📊 Dashboard</div>
+  <nav class="menu-bar">
+    <div class="menu-item" onclick="openModule('booking')">🏨 Booking Manager</div>
+    <div class="menu-item" onclick="openModule('housekeeping')">🧹 Housekeeping Tracker</div>
+    <div class="menu-item" onclick="openModule('vendor')">📦 Vendor Management</div>
+    <div class="menu-item" onclick="openModule('inventory')">📋 Inventory Management</div>
+    <div class="menu-item" onclick="openModule('kitchen')">🍽 Kitchen Orders</div>
+    <div class="menu-item" onclick="openModule('payments')">💳 Payments & Refunds</div>
+    <div class="menu-item" onclick="openModule('property')">🏠 Property Management</div>
+    <div class="menu-item" onclick="openModule('dashboard')">📊 Dashboard</div>
+  </nav>
+
+  <main class="menu-content">
+    <h2>Select a module to get started</h2>
   </main>
 
   <script src="script.js"></script>
