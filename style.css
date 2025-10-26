@@ -135,6 +135,20 @@ header h1 {
   color: #333;
 }
 
+/* ===== ACTIVE MENU ITEM ===== */
+.menu-card.active {
+  background: #0077ff;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 119, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.menu-card.active:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 119, 255, 0.4);
+}
+
+
 
 #logoutBtn {
   background: #ff4d4d;
