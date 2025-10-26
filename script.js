@@ -44,22 +44,31 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         */
 
-        if (data.status === 'Success') {
-          // save info to localStorage
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userName', data.username);
-          localStorage.setItem('userRole', data.role);
+       if (data.status === 'Success') {
+  // hide error messages
+  usernameError.style.display = 'none';
+  passwordError.style.display = 'none';
 
-          // redirect to menu
-          window.location.href = 'menu.html';
-        } else if (data.status === 'Wrong Username') {
-          usernameError.textContent = 'Incorrect Username';
-          passwordError.textContent = 'Incorrect Password';
-        } else if (data.status === 'Wrong Password') {
-          passwordError.textContent = 'Incorrect Password';
-        } else {
-          alert('Unexpected response from server.');
-        }
+  // save info to localStorage
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('userName', data.username);
+  localStorage.setItem('userRole', data.role);
+
+  // redirect to menu
+  window.location.href = 'menu.html';
+} else if (data.status === 'Wrong Username') {
+  usernameError.textContent = 'Incorrect Username';
+  usernameError.style.display = 'block';
+
+  passwordError.textContent = 'Incorrect Password';
+  passwordError.style.display = 'block';
+} else if (data.status === 'Wrong Password') {
+  passwordError.textContent = 'Incorrect Password';
+  passwordError.style.display = 'block';
+} else {
+  alert('Unexpected response from server.');
+}
+
 
       } catch (err) {
         console.error('Login error:', err);
