@@ -63,7 +63,8 @@ body {
   color: #cc0000;
   font-size: 0.85rem;
   margin: 0 0 0.5rem 0;
-  height: 1em; /* reserve space even when empty */
+  height: 1em;        /* reserve space */
+  display: none;      /* hide by default */
 }
 
 .login-container form button {
