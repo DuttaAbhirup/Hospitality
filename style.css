@@ -1,154 +1,115 @@
+/* ---------- Base ---------- */
+:root {
+  --blue: #0077ff;
+  --light-bg: #f9fafb;
+  --menu-bg: #f1f5fb;
+  --card-white: #ffffff;
+  --danger: #ff4d4d;
+}
+
+* { box-sizing: border-box; }
+html,body { height: 100%; margin: 0; }
 body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #f9fafb;
+  font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background-color: var(--light-bg);
   color: #222;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-/* ===== LOGIN CONTAINER ===== */
-.login-container {
-  background: #fff;
-  padding: 2rem 3rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  text-align: center;
-  width: 320px;
-}
-
-.logo {
-  width: 80px;
-  margin-bottom: 1rem;
-}
-
-.login-container input {
-  display: block;
-  width: 100%;
-  margin: 0.5rem 0;
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  outline: none;
-}
-
-.login-container button {
-  width: 100%;
-  padding: 0.8rem;
-  background: #0077ff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
-}
-
-.login-container button:hover {
-  background: #005bcc;
-}
-
-.note {
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 0.5rem;
-}
-
-/* ===== HEADER (Top Blue Bar) ===== */
-header {
+/* ---------- Top Blue Bar (fixed) ---------- */
+.topbar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  background: #0077ff;
-  color: white;
+  right: 0;
+  height: 64px;
+  background: var(--blue);
+  color: #fff;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   z-index: 1000;
 }
 
-header h1 {
-  font-size: 1.4rem;
-  font-weight: 600;
+.topbar h1 {
+  font-size: 1.25rem;
   margin: 0;
+  font-weight: 600;
 }
 
-/* ===== LOGOUT BUTTON ===== */
+/* logout */
 #logoutBtn {
-  background: #ff4d4d;
-  color: white;
+  background: var(--danger);
+  color: #fff;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
+  font-weight: 600;
 }
+#logoutBtn:hover { background: #cc0000; }
 
-#logoutBtn:hover {
-  background: #cc0000;
-}
+/* ---------- Menu bar ---------- */
+/* ensure content not hidden by header: add top offset to menu */
+.menu-page { padding-top: 64px; }
 
-/* ===== HORIZONTAL MENU BAR ===== */
+/* horizontal toolbar */
 .menu-grid {
   display: flex;
-  justify-content: center;
+  gap: 12px;
   align-items: center;
-  flex-wrap: nowrap;
+  padding: 12px;
+  background: var(--menu-bg);
+  border-bottom: 1px solid #e6e9ef;
   overflow-x: auto;
   white-space: nowrap;
-  background: #f1f5fb;
-  padding: 1rem 0.5rem;
-  margin-top: 70px;
-  border-bottom: 1px solid #e0e0e0;
-  gap: 1rem;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* ===== MENU ITEM CARDS ===== */
+/* menu card */
 .menu-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   flex-shrink: 0;
-  background: white;
-  border-radius: 8px;
-  padding: 1rem 1.5rem;
-  text-align: center;
+  background: var(--card-white);
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-width: 160px;
   cursor: pointer;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: all 0.2s ease-in-out;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
 }
+.menu-card .label { display: inline-block; font-size: 0.95rem; }
 
+/* hover */
 .menu-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.10);
 }
 
-/* ===== ACTIVE MENU ITEM ===== */
+/* active state */
 .menu-card.active {
-  background: #0077ff;
+  background: var(--blue);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 119, 255, 0.3);
-  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,119,255,0.22);
+  transform: translateY(-4px);
 }
 
-.menu-card.active:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 119, 255, 0.4);
+/* small screens: reduce card size */
+@media (max-width:560px) {
+  .menu-card { min-width: 130px; padding: 8px 12px; font-size: 0.9rem; }
+  .topbar h1 { font-size: 1rem; }
 }
 
-/* ===== MAIN CONTENT ===== */
-.menu-page main {
-  padding: 2rem;
-  text-align: center;
+/* ---------- main content ---------- */
+.menu-content {
+  padding: 28px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
   color: #333;
-}
-
-.menu-page {
-  padding-top: 70px;
 }
