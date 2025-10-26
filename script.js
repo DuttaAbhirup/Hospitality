@@ -1,58 +1,40 @@
-// Basic mock login for demo
+// Basic navigation + active state persistence
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('loginForm');
+  const menuItems = document.querySelectorAll('.menu-card');
+  const contentTitle = document.querySelector('#content h2');
+  const contentDetail = document.getElementById('detail');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // Handle login
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      if (username === 'admin' && password === 'admin123') {
-        localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = 'menu.html';
-      } else {
-        alert('Invalid credentials. Try admin / admin123');
-      }
-    });
+  // restore active from localStorage
+  const saved = localStorage.getItem('activeModule');
+  if (saved) {
+    const el = document.querySelector(`.menu-card[data-module="${saved}"]`);
+    if (el) setActive(el, false);
   }
 
-  // Handle logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('isLoggedIn');
-      window.location.href = 'index.html';
-    });
-  }
+  // click handler
+  menuItems.forEach(item => item.addEventListener('click', () => {
+    setActive(item, true);
+  }));
 
-  // Redirect unauthenticated users
-  if (document.body.classList.contains('menu-page')) {
-    const loggedIn = localStorage.getItem('isLoggedIn');
-    if (!loggedIn) {
-      window.location.href = 'index.html';
-    }
+  // logout (example)
+  if (logoutBtn) logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('activeModule');
+    // redirect to login; replace path if needed
+    window.location.href = 'index.html';
+  });
+
+  function setActive(element, save) {
+    menuItems.forEach(i => i.classList.remove('active'));
+    element.classList.add('active');
+
+    const moduleKey = element.getAttribute('data-module') || element.textContent.trim();
+    if (save) localStorage.setItem('activeModule', moduleKey);
+
+    // update content area (placeholder logic)
+    contentTitle.textContent = element.querySelector('.label')?.textContent || element.textContent.trim();
+    contentDetail.textContent = `You opened: ${moduleKey}. (Module implementation pending.)`;
+    console.log('Selected:', moduleKey);
   }
 });
-
-// Module navigation placeholder
-function openModule(module) {
-  alert(`Opening ${module} module... (To be implemented)`);
-}
-
-// Highlight active menu item
-if (document.body.classList.contains('menu-page')) {
-  const menuItems = document.querySelectorAll('.menu-card');
-
-  menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-      menuItems.forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-
-      // You can handle module loading here later
-      console.log(`Selected module: ${item.textContent.trim()}`);
-    });
-  });
-}
-
