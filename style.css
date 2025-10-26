@@ -58,37 +58,83 @@ body {
   margin-top: 0.5rem;
 }
 
+/* ===== HEADER (Top Blue Bar) ===== */
 header {
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   background: #0077ff;
   color: white;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding: 0.8rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
+header h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ===== LOGOUT BUTTON ===== */
+#logoutBtn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#logoutBtn:hover {
+  background: #cc0000;
+}
+
+/* ===== HORIZONTAL MENU BAR ===== */
 .menu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
+  display: flex; /* change from grid to flex */
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  background: #f1f5fb;
+  padding: 1rem 0.5rem;
+  margin-top: 70px; /* space for fixed header */
+  border-bottom: 1px solid #e0e0e0;
+  gap: 1rem;
 }
 
+/* ===== MENU ITEM CARDS ===== */
 .menu-card {
-  background: #fff;
-  padding: 2rem 1rem;
-  border-radius: 12px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
   text-align: center;
   cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease-in-out;
 }
 
 .menu-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
 }
+
+/* ===== MAIN CONTENT BELOW MENU ===== */
+.menu-page main {
+  padding: 2rem;
+  text-align: center;
+  color: #333;
+}
+
 
 #logoutBtn {
   background: #ff4d4d;
