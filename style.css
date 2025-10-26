@@ -59,6 +59,13 @@ body {
   outline: none;
 }
 
+.error {
+  color: #cc0000;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem 0;
+  height: 1em; /* reserve space even when empty */
+}
+
 .login-container form button {
   width: 100%;
   padding: 0.8rem;
