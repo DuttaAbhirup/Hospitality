@@ -62,9 +62,9 @@ body {
 .error {
   color: #cc0000;
   font-size: 0.85rem;
-  margin: 0 0 0.5rem 0;
-  height: 1em;        /* reserve space */
-  display: none;      /* hide by default */
+  margin: 0.2rem 0 0.6rem 0;  /* reduce top margin so it doesn't add too much gap */
+  min-height: 1em;           /* reserve vertical space */
+  display: none;             /* hide by default */
 }
 
 .login-container form button {
