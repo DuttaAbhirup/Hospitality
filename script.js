@@ -3,8 +3,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- LOGIN PAGE ---
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    const usernameError = document.getElementById('usernameError');
+    const passwordError = document.getElementById('passwordError');
+
+    // redirect logged-in users automatically
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      window.location.href = 'menu.html';
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      usernameError.textContent = '';
+      passwordError.textContent = '';
+
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
 
@@ -13,18 +25,43 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      if (username === 'admin' && password === 'admin123') {
-        localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = 'menu.html';
-      } else {
-        alert('Invalid username or password!');
+      try {
+        // send POST request to webhook
+        const response = await fetch('YOUR_WEBHOOK_URL', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+        /*
+          Expected response format:
+          {
+            status: "Success" | "Wrong Username" | "Wrong Password",
+            username: "John Doe",
+            role: "Admin"
+          }
+        */
+
+        if (data.status === 'Success') {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userName', data.username);
+          localStorage.setItem('userRole', data.role);
+          window.location.href = 'menu.html';
+        } else if (data.status === 'Wrong Username') {
+          usernameError.textContent = 'Incorrect Username';
+          passwordError.textContent = 'Incorrect Password';
+        } else if (data.status === 'Wrong Password') {
+          passwordError.textContent = 'Incorrect Password';
+        } else {
+          alert('Unexpected response from server.');
+        }
+
+      } catch (err) {
+        console.error('Login error:', err);
+        alert('Failed to login. Please try again later.');
       }
     });
-
-    // redirect logged-in users automatically
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-      window.location.href = 'menu.html';
-    }
   }
 
   // --- MENU PAGE ---
@@ -34,7 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
 
   if (menuItems.length > 0) {
-    // restore active from localStorage
+    // redirect to login if not logged in
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      window.location.href = 'index.html';
+    }
+
+    // show username and role
+    const userInfo = document.getElementById('userInfo');
+    if (userInfo) {
+      const name = localStorage.getItem('userName') || '';
+      const role = localStorage.getItem('userRole') || '';
+      userInfo.innerHTML = `Welcome, ${name} <br/> ${role}`;
+    }
+
+    // restore active module
     const saved = localStorage.getItem('activeModule');
     if (saved) {
       const el = document.querySelector(`.menu-card[data-module="${saved}"]`);
@@ -52,6 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('activeModule');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userRole');
       window.location.href = 'index.html';
     });
   }
