@@ -1,30 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Main Menu | Hospitality Suite</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="menu-page">
   <header class="topbar">
-    <h1>Hospitality Suite</h1>
-    <button id="logoutBtn">Logout</button>
+    <div class="brand">
+      <h1>Hospitality Suite</h1>
+    </div>
+    <div class="actions">
+      <button id="logoutBtn">Logout</button>
+    </div>
   </header>
 
-  <nav class="menu-bar">
-    <div class="menu-item" onclick="openModule('booking')">🏨 Booking Manager</div>
-    <div class="menu-item" onclick="openModule('housekeeping')">🧹 Housekeeping Tracker</div>
-    <div class="menu-item" onclick="openModule('vendor')">📦 Vendor Management</div>
-    <div class="menu-item" onclick="openModule('inventory')">📋 Inventory Management</div>
-    <div class="menu-item" onclick="openModule('kitchen')">🍽 Kitchen Orders</div>
-    <div class="menu-item" onclick="openModule('payments')">💳 Payments & Refunds</div>
-    <div class="menu-item" onclick="openModule('property')">🏠 Property Management</div>
-    <div class="menu-item" onclick="openModule('dashboard')">📊 Dashboard</div>
+  <nav class="menu-grid" role="navigation" aria-label="Main modules">
+    <div class="menu-card" data-module="booking">🏨 <span class="label">Booking Manager</span></div>
+    <div class="menu-card" data-module="housekeeping">🧹 <span class="label">Housekeeping</span></div>
+    <div class="menu-card" data-module="vendor">📦 <span class="label">Vendor</span></div>
+    <div class="menu-card" data-module="inventory">📋 <span class="label">Inventory</span></div>
+    <div class="menu-card" data-module="kitchen">🍽 <span class="label">Kitchen Orders</span></div>
+    <div class="menu-card" data-module="payments">💳 <span class="label">Payments</span></div>
+    <div class="menu-card" data-module="property">🏠 <span class="label">Property</span></div>
+    <div class="menu-card" data-module="dashboard">📊 <span class="label">Dashboard</span></div>
   </nav>
 
-  <main class="menu-content">
+  <main class="menu-content" id="content">
     <h2>Select a module to get started</h2>
+    <p id="detail">Click any module above.</p>
   </main>
 
   <script src="script.js"></script>
