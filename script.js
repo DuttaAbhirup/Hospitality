@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         */
 
-       if (data.status === 'Success') {
+  if (data.status === 'Success') {
   usernameError.style.display = 'none';
   passwordError.style.display = 'none';
 
@@ -57,13 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
   usernameError.textContent = 'Incorrect Username';
   usernameError.style.display = 'block';
 
-  passwordError.textContent = 'Incorrect Password';
-  passwordError.style.display = 'block';
+  passwordError.textContent = '';  // hide password error
+  passwordError.style.display = 'none';
 } else if (data.status === 'Wrong Password') {
-  usernameError.style.display = 'none'; // hide username error
+  usernameError.textContent = ''; // hide username error
+  usernameError.style.display = 'none';
+
   passwordError.textContent = 'Incorrect Password';
   passwordError.style.display = 'block';
 }
+
 
 
 
