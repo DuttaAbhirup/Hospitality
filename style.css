@@ -36,6 +36,18 @@ body {
   text-align: center;
 }
 
+.login-container .logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem; /* spacing between inputs/buttons */
+}
+
 .login-container form input {
   display: block;
   width: 100%;
