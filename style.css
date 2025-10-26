@@ -7,10 +7,7 @@
   --danger: #ff4d4d;
 }
 
-.login-container {
-  padding: 2rem;
-  width: 320px;
-}
+
 
 * { box-sizing: border-box; }
 html,body { height: 100%; margin: 0; }
@@ -20,6 +17,11 @@ body {
   color: #222;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+}
+
+.login-container {
+  padding: 2rem;
+  width: 320px;
 }
 
 /* ---------- Top Blue Bar (fixed) ---------- */
