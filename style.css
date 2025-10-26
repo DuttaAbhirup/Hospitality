@@ -62,10 +62,11 @@ body {
 .error {
   color: #cc0000;
   font-size: 0.85rem;
-  margin: 0.2rem 0 0.6rem 0;  /* reduce top margin so it doesn't add too much gap */
-  min-height: 1em;           /* reserve vertical space */
+  margin: 0.2rem 0 0.6rem 0;  /* small top margin, bigger bottom margin */
+  min-height: 1em;           /* reserve space for text */
   display: none;             /* hide by default */
 }
+
 
 .login-container form button {
   width: 100%;
