@@ -17,6 +17,30 @@ document.addEventListener('DOMContentLoaded', () => {
     setActive(item, true);
   }));
 
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault(); // prevent default form submission
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      // Simple front-end validation (for demo purposes)
+      if (!username || !password) {
+        alert('Please enter both username and password.');
+        return;
+      }
+
+      // Example: hard-coded demo credentials
+      if (username === 'admin' && password === 'admin123') {
+        localStorage.setItem('isLoggedIn', 'true'); // mark as logged in
+        window.location.href = 'menu.html'; // redirect to menu page
+      } else {
+        alert('Invalid username or password!');
+      }
+    });
+  }
+
   // logout (example)
   if (logoutBtn) logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('isLoggedIn');
