@@ -119,32 +119,39 @@ body {
 .menu-grid {
   display: flex;
   gap: 12px;
-  align-items: center;
+  align-items: flex-start; /* align top of items */
   padding: 12px;
   background: var(--menu-bg);
   border-bottom: 1px solid #e6e9ef;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
+  flex-wrap: wrap; /* allow items to wrap to next line if needed */
+  overflow-x: visible; /* remove horizontal scroll */
 }
 
 /* menu card */
 .menu-card {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column; /* stack icon and label if any */
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  justify-content: center;
   background: var(--card-white);
   border-radius: 10px;
-  padding: 10px 16px;
-  min-width: 160px;
+  padding: 10px;
+  width: 160px;       /* fixed width for all buttons */
+  height: 80px;       /* fixed height for all buttons */
   cursor: pointer;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+  text-align: center;
+  word-wrap: break-word;   /* wrap long text */
+  white-space: normal;     /* allow wrapping */
 }
-.menu-card .label { display: inline-block; font-size: 0.95rem; }
-
+.menu-card .label {
+  display: block;
+  font-size: 0.95rem;
+  line-height: 1.2rem;
+  word-break: break-word;
+}
 /* hover */
 .menu-card:hover {
   transform: translateY(-4px);
