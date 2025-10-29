@@ -157,7 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // If booking.html included a static modal, move it to document.body so modal CSS/overlay behaves properly
 const maybeModal = document.getElementById('bookingModal');
 if (maybeModal && maybeModal.parentElement !== document.body) {
+  if (!document.body.contains(maybeModal)) {
   document.body.appendChild(maybeModal);
+}
 }
 
 initBookingModule();
@@ -388,6 +390,11 @@ function initBookingModule() {
       if (parseInt(gi.value || '0') > 1) gi.value = parseInt(gi.value || '0') - 1;
     };
 
+     // close on esc
+    const escHandler = (ev) => {
+      if (ev.key === 'Escape') cleanupModal();
+    };
+
     // Close logic & cleanup
     function cleanupModal() {
       document.removeEventListener('keydown', escHandler);
@@ -413,10 +420,7 @@ function initBookingModule() {
       if (ev.target === modal) cleanupModal();
     };
 
-    // close on esc
-    const escHandler = (ev) => {
-      if (ev.key === 'Escape') cleanupModal();
-    };
+   
     document.addEventListener('keydown', escHandler);
   } // end openBookingModal
 
