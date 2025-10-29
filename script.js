@@ -152,27 +152,19 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     const res = await fetch('booking.html');
     const html = await res.text();
-    document.getElementById('content').innerHTML = html;
+    const contentEl = document.getElementById('content');
+    contentEl.innerHTML = html;
 
-    // If booking.html included a static modal, move it to document.body so modal CSS/overlay behaves properly
-    const maybeModal = document.getElementById('bookingModal');
-    if (maybeModal && maybeModal.parentElement !== document.body) {
-      document.body.appendChild(maybeModal);
-      const closeControl = maybeModal.querySelector('.close, .close-btn, #closeModal');
-      if (closeControl) closeControl.onclick = cleanupModal;
-      // Reflow fix: force browser to apply the CSS properly
-      void maybeModal.offsetWidth;
-    }
-
-    // Initialize the booking module after content load
-    initBookingModule();
+    // Wait one tick to ensure DOM is parsed
+    setTimeout(() => {
+      initBookingModule(); // attach handlers after DOM insertion
+    }, 0);
 
   } catch (err) {
     console.error('Error loading booking module:', err);
   }
-
-
-        } else {
+}
+ else {
           document.getElementById('content').innerHTML = `
             <h2>${item.querySelector('.label')?.textContent || module}</h2>
             <p id="detail">You opened: ${module}. (Module implementation pending.)</p>
