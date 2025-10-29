@@ -162,8 +162,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // attach handlers only to visible items
     visibleMenuItems.forEach(item => {
-      item.addEventListener('click', () => setActive(item, true));
-    });
+  item.addEventListener('click', async () => {
+    setActive(item, true);
+
+    const module = item.dataset.module;
+
+    // dynamically load module content
+    if (module === 'booking') {
+      try {
+        const res = await fetch('booking.html');
+        const html = await res.text();
+        document.getElementById('content').innerHTML = html;
+        initBookingModule(); // initialize the tab behavior
+      } catch (err) {
+        console.error('Error loading booking module:', err);
+      }
+    } else {
+      // fallback for other modules
+      document.getElementById('content').innerHTML = `
+        <h2>${item.querySelector('.label')?.textContent || module}</h2>
+        <p id="detail">You opened: ${module}. (Module implementation pending.)</p>
+      `;
+    }
+  });
+});
   } // end menu block
 
   // logout
@@ -192,5 +214,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contentDetail)
       contentDetail.textContent = `You opened: ${moduleKey}. (Module implementation pending.)`;
   }
+
+  // initialize the booking management module
+function initBookingModule() {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  const filterBtn = document.getElementById('filterBtn');
+  const tbody = document.getElementById('bookingTableBody');
+  if (filterBtn) {
+    filterBtn.addEventListener('click', () => {
+      tbody.innerHTML = `
+        <tr>
+          <td>#B123</td>
+          <td>John Doe</td>
+          <td>2025-10-29</td>
+          <td>2025-10-31</td>
+          <td>Confirmed</td>
+        </tr>
+      `;
+    });
+  }
+
+  const createBookingForm = document.getElementById('createBookingForm');
+  if (createBookingForm) {
+    createBookingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Booking created successfully!');
+      createBookingForm.reset();
+    });
+  }
+}
+
 
 }); // DOMContentLoaded end
