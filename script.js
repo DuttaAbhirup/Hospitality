@@ -10,18 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameError = document.getElementById('usernameError');
     const passwordError = document.getElementById('passwordError');
 
-    // Defensive: if error elements missing, create no-op objects
     const showEl = (el, text) => {
       if (!el) return;
       el.textContent = text || '';
       el.style.display = text ? 'block' : 'none';
     };
 
-    // initialize hidden
     showEl(usernameError, '');
     showEl(passwordError, '');
 
-    // auto-redirect if already logged in
     if (localStorage.getItem('isLoggedIn') === 'true') {
       console.log('Already logged in — redirecting to menu.html');
       window.location.href = './menu.html';
@@ -30,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', async (ev) => {
       ev.preventDefault();
-      // clear errors
       showEl(usernameError, '');
       showEl(passwordError, '');
 
@@ -60,20 +56,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await resp.json();
         console.log('Webhook response:', data);
 
-        // expected: { status: "Success"|"Wrong Username"|"Wrong Password", username: "...", role: "..." }
         const status = (data?.status || '').toString();
 
         if (status === 'Success') {
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('userName', data.username || username);
           localStorage.setItem('userRole', data.role || '');
-          // clear errors and redirect
           showEl(usernameError, '');
           showEl(passwordError, '');
           window.location.href = './menu.html';
         } else if (status === 'Wrong Username') {
           showEl(usernameError, 'Incorrect Username');
-          showEl(passwordError, 'Incorrect Password'); // you wanted both for this case
+          showEl(passwordError, 'Incorrect Password');
         } else if (status === 'Wrong Password') {
           showEl(usernameError, '');
           showEl(passwordError, 'Incorrect Password');
@@ -87,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Failed to login. Please try again later.');
       }
     });
-  } // end loginForm block
+  }
 
 
   /* ----------------------
@@ -99,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
 
   if (menuItemsAll.length > 0) {
-    // protect route
     if (localStorage.getItem('isLoggedIn') !== 'true') {
       console.log('Not logged in — redirecting to index.html');
       window.location.href = './index.html';
@@ -107,35 +100,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const name = localStorage.getItem('userName') || '';
-    const roleRaw = localStorage.getItem('userRole') || '';
-    const allowed = roleAttr
-  .split(',')
-  .map(r => r.trim().toLowerCase().replace(/\s+/g, ''))
-  .filter(Boolean);
-
+    const userRole = (localStorage.getItem('userRole') || '').toLowerCase();
     console.log('Menu page loaded for user:', { name, userRole });
 
-    // show user info in topbar
     const userInfo = document.getElementById('userInfo');
     if (userInfo) {
-      userInfo.innerHTML = name ? `Welcome, ${name} <br/><small>${roleRaw}</small>` : `<small>${roleRaw}</small>`;
+      userInfo.innerHTML = name ? `Welcome, ${name} <br/><small>${userRole}</small>` : `<small>${userRole}</small>`;
     }
 
-    // role-based visibility using data-role attribute on each card
-    // data-role example: "Admin,Manager" or "Admin" or missing (means visible to all)
     const visibleMenuItems = [];
     menuItemsAll.forEach(item => {
       const roleAttr = item.getAttribute('data-role');
       if (!roleAttr) {
-        // no restriction -> visible
         item.style.display = '';
         visibleMenuItems.push(item);
         return;
       }
 
-      // parse allowed roles, normalize to lowercase
-      const allowed = roleAttr.split(',').map(r => r.trim().toLowerCase()).filter(Boolean);
-      // if userRole is empty (not present), hide restricted items
+      const allowed = roleAttr.split(',').map(r => r.trim().toLowerCase());
       if (!userRole) {
         item.style.display = 'none';
         return;
@@ -151,47 +133,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Visible menu items count:', visibleMenuItems.length);
 
-    // restore active module if it's visible
     const saved = localStorage.getItem('activeModule');
     if (saved) {
       const el = document.querySelector(`.menu-card[data-module="${saved}"]`);
       if (el && el.style.display !== 'none') {
         setActive(el, false);
       } else {
-        // saved module not visible/hide it
         localStorage.removeItem('activeModule');
       }
     }
 
-    // attach handlers only to visible items
     visibleMenuItems.forEach(item => {
-  item.addEventListener('click', async () => {
-    setActive(item, true);
+      item.addEventListener('click', async () => {
+        setActive(item, true);
+        const module = item.dataset.module;
 
-    const module = item.dataset.module;
+        if (module === 'booking') {
+          try {
+            const res = await fetch('booking.html');
+            const html = await res.text();
+            document.getElementById('content').innerHTML = html;
+            initBookingModule(); // initialize tabs + reservations + modal
+          } catch (err) {
+            console.error('Error loading booking module:', err);
+          }
+        } else {
+          document.getElementById('content').innerHTML = `
+            <h2>${item.querySelector('.label')?.textContent || module}</h2>
+            <p id="detail">You opened: ${module}. (Module implementation pending.)</p>
+          `;
+        }
+      });
+    });
+  }
 
-    // dynamically load module content
-    if (module === 'booking') {
-      try {
-        const res = await fetch('booking.html');
-        const html = await res.text();
-        document.getElementById('content').innerHTML = html;
-        initBookingModule(); // initialize the tab behavior
-      } catch (err) {
-        console.error('Error loading booking module:', err);
-      }
-    } else {
-      // fallback for other modules
-      document.getElementById('content').innerHTML = `
-        <h2>${item.querySelector('.label')?.textContent || module}</h2>
-        <p id="detail">You opened: ${module}. (Module implementation pending.)</p>
-      `;
-    }
-  });
-});
-  } // end menu block
-
-  // logout
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('isLoggedIn');
@@ -202,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // helper: setActive
   function setActive(element, save) {
     const currentMenuItems = Array.from(document.querySelectorAll('.menu-card'));
     currentMenuItems.forEach(i => i.classList.remove('active'));
@@ -218,45 +192,154 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDetail.textContent = `You opened: ${moduleKey}. (Module implementation pending.)`;
   }
 
-  // initialize the booking management module
-function initBookingModule() {
-  const tabButtons = document.querySelectorAll('.tab-btn');
-  const tabContents = document.querySelectorAll('.tab-content');
 
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabButtons.forEach(b => b.classList.remove('active'));
-      tabContents.forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById(btn.dataset.tab).classList.add('active');
+  /* ----------------------
+     BOOKING MODULE
+     ---------------------- */
+  function initBookingModule() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
     });
-  });
 
-  const filterBtn = document.getElementById('filterBtn');
-  const tbody = document.getElementById('bookingTableBody');
-  if (filterBtn) {
-    filterBtn.addEventListener('click', () => {
-      tbody.innerHTML = `
-        <tr>
-          <td>#B123</td>
-          <td>John Doe</td>
-          <td>2025-10-29</td>
-          <td>2025-10-31</td>
-          <td>Confirmed</td>
-        </tr>
+    const filterBtn = document.getElementById('filterBtn');
+    const tbody = document.getElementById('bookingTableBody');
+    if (filterBtn) {
+      filterBtn.addEventListener('click', () => {
+        tbody.innerHTML = `
+          <tr>
+            <td>#B123</td>
+            <td>John Doe</td>
+            <td>9876543210</td>
+            <td>Deluxe Suite</td>
+            <td>Available</td>
+            <td>₹4500</td>
+            <td>2025-10-29</td>
+            <td>2025-10-31</td>
+            <td>Confirmed</td>
+            <td>Admin</td>
+            <td><button class="view-btn">View</button></td>
+          </tr>
+        `;
+
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.addEventListener('click', openBookingModal);
+        });
+      });
+    }
+
+    const createBookingForm = document.getElementById('createBookingForm');
+    if (createBookingForm) {
+      createBookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Booking created successfully!');
+        createBookingForm.reset();
+      });
+    }
+
+    // --- Modal handling ---
+    function openBookingModal() {
+      const modalHTML = `
+        <div class="modal active" id="bookingModal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Booking Details</h3>
+              <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Booking ID:</strong> #B123</p>
+              <p><strong>Guest Name:</strong> John Doe</p>
+              <p><strong>Contact:</strong> 9876543210</p>
+              <p><strong>Room Configuration:</strong> Deluxe Suite</p>
+              <p><strong>Status:</strong> Confirmed</p>
+
+              <label>Room Type:</label>
+              <div id="roomContainer">
+                <div class="room-line">
+                  <select>
+                    <option>Deluxe</option>
+                    <option>Suite</option>
+                    <option>Standard</option>
+                  </select>
+                  <div class="counter">
+                    <button type="button" class="dec">-</button>
+                    <input type="number" value="1" min="1" style="width:60px;">
+                    <button type="button" class="inc">+</button>
+                  </div>
+                </div>
+              </div>
+              <button class="add-room-btn" id="addRoom">+ Add Another Room</button>
+
+              <label>Check-in Date:</label>
+              <input type="date" id="checkInDate">
+              <label>Check-out Date:</label>
+              <input type="date" id="checkOutDate">
+
+              <label>Guests:</label>
+              <div class="counter">
+                <button type="button" id="decGuest">-</button>
+                <input type="number" id="guestCount" value="2" min="1" style="width:60px;">
+                <button type="button" id="incGuest">+</button>
+              </div>
+
+              <label>Total Tariff:</label>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <span>₹</span><input type="number" id="totalTariff" placeholder="0">
+              </div>
+
+              <label>Advance Amount:</label>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <span>₹</span><input type="number" id="advanceAmount" placeholder="0">
+              </div>
+
+              <button class="create-request-btn">Create Booking Request</button>
+            </div>
+          </div>
+        </div>
       `;
-    });
-  }
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-  const createBookingForm = document.getElementById('createBookingForm');
-  if (createBookingForm) {
-    createBookingForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('Booking created successfully!');
-      createBookingForm.reset();
-    });
-  }
-}
+      const modal = document.getElementById('bookingModal');
+      const closeModal = document.getElementById('closeModal');
+      closeModal.addEventListener('click', () => modal.remove());
 
+      // Add room logic
+      document.getElementById('addRoom').addEventListener('click', () => {
+        const container = document.getElementById('roomContainer');
+        const line = document.createElement('div');
+        line.classList.add('room-line');
+        line.innerHTML = `
+          <select>
+            <option>Deluxe</option>
+            <option>Suite</option>
+            <option>Standard</option>
+          </select>
+          <div class="counter">
+            <button type="button" class="dec">-</button>
+            <input type="number" value="1" min="1" style="width:60px;">
+            <button type="button" class="inc">+</button>
+          </div>
+        `;
+        container.appendChild(line);
+      });
+
+      // Increment/decrement logic for guest count
+      document.getElementById('incGuest').addEventListener('click', () => {
+        const guestInput = document.getElementById('guestCount');
+        guestInput.value = parseInt(guestInput.value) + 1;
+      });
+      document.getElementById('decGuest').addEventListener('click', () => {
+        const guestInput = document.getElementById('guestCount');
+        if (guestInput.value > 1) guestInput.value = parseInt(guestInput.value) - 1;
+      });
+    }
+  }
 
 }); // DOMContentLoaded end
