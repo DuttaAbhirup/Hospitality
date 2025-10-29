@@ -246,6 +246,12 @@ function initBookingModule() {
 
   // --- Modal handling ---
   function openBookingModal() {
+  // If there's already a modal in the DOM (static in booking.html), reuse it.
+  let modal = document.getElementById('bookingModal');
+  let createdHere = false;
+
+  if (!modal) {
+    // create dynamic modal (same structure you used previously)
     const modalHTML = `
       <div class="modal active" id="bookingModal">
         <div class="modal-content" role="dialog" aria-modal="true">
@@ -305,71 +311,116 @@ function initBookingModule() {
       </div>
     `;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-    const modal = document.getElementById('bookingModal');
-    const closeModal = document.getElementById('closeModal');
-    const addRoomBtn = document.getElementById('addRoom');
-
-    // Close button
-    closeModal.addEventListener('click', cleanupModal);
-
-    // Close on outside click
-    modal.addEventListener('click', (ev) => {
-      if (ev.target === modal) cleanupModal();
-    });
-
-    // Close on Esc
-    const escHandler = (ev) => {
-      if (ev.key === 'Escape') cleanupModal();
-    };
-    document.addEventListener('keydown', escHandler);
-
-    // Attach counter handlers
-    function attachCounterHandlers(container) {
-      container.querySelectorAll('.inc').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const input = btn.parentElement.querySelector('.room-count');
-          input.value = Math.max(parseInt(input.value || '0') + 1, 1);
-        });
-      });
-      container.querySelectorAll('.dec').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const input = btn.parentElement.querySelector('.room-count');
-          input.value = Math.max(parseInt(input.value || '1') - 1, 1);
-        });
-      });
-    }
-
-    attachCounterHandlers(document.getElementById('roomContainer'));
-
-    // Add another room (clone)
-    addRoomBtn.addEventListener('click', () => {
-      const container = document.getElementById('roomContainer');
-      const clone = container.firstElementChild.cloneNode(true);
-      const input = clone.querySelector('.room-count');
-      input.value = 1;
-      container.appendChild(clone);
-      attachCounterHandlers(clone);
-    });
-
-    // Guest controls
-    const incGuest = document.getElementById('incGuest');
-    const decGuest = document.getElementById('decGuest');
-    incGuest.addEventListener('click', () => {
-      const guestInput = document.getElementById('guestCount');
-      guestInput.value = parseInt(guestInput.value) + 1;
-    });
-    decGuest.addEventListener('click', () => {
-      const guestInput = document.getElementById('guestCount');
-      if (parseInt(guestInput.value) > 1) guestInput.value = parseInt(guestInput.value) - 1;
-    });
-
-    function cleanupModal() {
-      document.removeEventListener('keydown', escHandler);
-      modal.remove();
-    }
+    modal = document.getElementById('bookingModal');
+    createdHere = true;
+  } else {
+    // show the existing static modal
+    modal.classList.add('active');
   }
+
+  // find close control(s) inside modal (support static markup and dynamic one)
+  const closeBtn =
+    modal.querySelector('#closeModal') ||
+    modal.querySelector('.close') ||
+    modal.querySelector('.close-btn');
+
+  // Helper: attach inc/dec handlers for a container (works for container or a single room-line)
+  function attachCounterHandlers(container) {
+    if (!container) return;
+    container.querySelectorAll('.inc').forEach(btn => {
+      // clear previous to avoid double-attach
+      btn.onclick = null;
+      btn.onclick = () => {
+        const input = btn.parentElement.querySelector('.room-count');
+        if (!input) return;
+        input.value = Math.max(parseInt(input.value || '0') + 1, 1);
+      };
+    });
+    container.querySelectorAll('.dec').forEach(btn => {
+      btn.onclick = null;
+      btn.onclick = () => {
+        const input = btn.parentElement.querySelector('.room-count');
+        if (!input) return;
+        input.value = Math.max(parseInt(input.value || '1') - 1, 1);
+      };
+    });
+  }
+
+  // attach handlers to existing roomContainer (whether static or dynamic)
+  const roomContainer = modal.querySelector('#roomContainer');
+  attachCounterHandlers(roomContainer);
+
+  // add-room button (may be static or dynamic)
+  const addRoomBtn = modal.querySelector('#addRoom');
+  if (addRoomBtn) {
+    addRoomBtn.onclick = (ev) => {
+      ev.preventDefault();
+      if (!roomContainer) return;
+      // clone the first .room-line to keep structure identical
+      const firstLine = roomContainer.querySelector('.room-line');
+      if (!firstLine) return;
+      const clone = firstLine.cloneNode(true);
+      // reset numeric value on cloned input(s)
+      const clonedInput = clone.querySelector('.room-count');
+      if (clonedInput) clonedInput.value = 1;
+      roomContainer.appendChild(clone);
+      // attach handlers to the cloned line only
+      attachCounterHandlers(clone);
+    };
+  }
+
+  // guest +/- controls
+  const incGuest = modal.querySelector('#incGuest');
+  const decGuest = modal.querySelector('#decGuest');
+  if (incGuest) {
+    incGuest.onclick = () => {
+      const gi = modal.querySelector('#guestCount');
+      gi.value = parseInt(gi.value || '0') + 1;
+    };
+  }
+  if (decGuest) {
+    decGuest.onclick = () => {
+      const gi = modal.querySelector('#guestCount');
+      if (parseInt(gi.value || '0') > 1) gi.value = parseInt(gi.value || '0') - 1;
+    };
+  }
+
+  // close behavior: close button, outside click, Esc
+  function cleanupModal() {
+    // remove escape handler
+    document.removeEventListener('keydown', escHandler);
+    // hide or remove modal
+    if (createdHere) {
+      // if we created the DOM, remove it
+      const node = document.getElementById('bookingModal');
+      if (node && node.parentElement) node.parentElement.removeChild(node);
+    } else {
+      // if it was static, simply hide it
+      modal.classList.remove('active');
+    }
+    // clear onclick handlers we set on dynamic controls (optional but safe)
+    if (addRoomBtn) addRoomBtn.onclick = null;
+    if (incGuest) incGuest.onclick = null;
+    if (decGuest) decGuest.onclick = null;
+    // For cloned inc/dec we set inline onclicks; removing modal suffices
+  }
+
+  // close button
+  if (closeBtn) {
+    closeBtn.onclick = cleanupModal;
+  }
+
+  // click outside modal-content
+  modal.onclick = (ev) => {
+    if (ev.target === modal) cleanupModal();
+  };
+
+  // esc key
+  const escHandler = (ev) => {
+    if (ev.key === 'Escape') cleanupModal();
+  };
+  document.addEventListener('keydown', escHandler);
 }
 
-
+  }
 }); // DOMContentLoaded end
