@@ -14,18 +14,25 @@
       <label>To: <input type="date" id="toDate"></label>
       <button id="filterBtn">Filter</button>
     </div>
+
     <table class="booking-table">
       <thead>
         <tr>
           <th>Booking ID</th>
           <th>Guest Name</th>
-          <th>Check-in</th>
-          <th>Check-out</th>
+          <th>Contact</th>
+          <th>Room Configuration</th>
+          <th>Availability Comment</th>
+          <th>Room Tariff</th>
+          <th>Check In</th>
+          <th>Check Out</th>
           <th>Status</th>
+          <th>Last Updated By</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody id="bookingTableBody">
-        <tr><td colspan="5">Select a date range to view bookings.</td></tr>
+        <tr><td colspan="11">Select a date range to view bookings.</td></tr>
       </tbody>
     </table>
   </div>
@@ -45,5 +52,57 @@
       <label>Check-out: <input type="date" id="checkOut" required></label>
       <button type="submit">Create Booking</button>
     </form>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="bookingModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>View / Modify Booking</h3>
+
+    <div id="bookingDetails"></div>
+
+    <hr>
+    <div id="roomInputs">
+      <div class="room-row">
+        <label>Room Type:
+          <select>
+            <option>Deluxe</option>
+            <option>Suite</option>
+            <option>Standard</option>
+          </select>
+        </label>
+        <div class="quantity-control">
+          <button class="minus">-</button>
+          <input type="number" min="1" value="1">
+          <button class="plus">+</button>
+        </div>
+      </div>
+    </div>
+
+    <button id="addRoom">+ Add Another Room</button>
+
+    <div class="booking-dates">
+      <label>Check In: <input type="date" id="checkInDate"></label>
+      <label>Check Out: <input type="date" id="checkOutDate"></label>
+    </div>
+
+    <div class="guests">
+      <label>Guests:
+        <div class="quantity-control">
+          <button id="guestMinus">-</button>
+          <input type="number" min="1" value="1" id="guestCount">
+          <button id="guestPlus">+</button>
+        </div>
+      </label>
+    </div>
+
+    <div class="tariff">
+      <label>Total Tariff: ₹ <input type="number" id="totalTariff" min="0"></label>
+      <label>Advance: ₹ <input type="number" id="advanceAmount" min="0"></label>
+    </div>
+
+    <button id="createBookingRequest">Create Booking Request</button>
   </div>
 </div>
