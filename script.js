@@ -158,6 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
 const maybeModal = document.getElementById('bookingModal');
 if (maybeModal && maybeModal.parentElement !== document.body) {
   document.body.appendChild(maybeModal);
+  const closeControl = maybeModal.querySelector('.close, .close-btn, #closeModal');
+if (closeControl) closeControl.onclick = cleanupModal;
   // Reflow fix: force browser to apply the CSS properly
   void maybeModal.offsetWidth;
 }
