@@ -18,89 +18,169 @@
   </header>
 
   <nav class="menu-grid" role="navigation" aria-label="Main modules">
+
+    <!-- Admin & Manager -->
     <div class="menu-card" data-module="booking" data-role="Admin,Manager">
       🏨 <span class="label">Booking Management</span>
     </div>
 
+    <!-- Admin & Housekeeping -->
     <div class="menu-card" data-module="housekeeping" data-role="Admin,Housekeeping,Manager">
       🧹 <span class="label">Housekeeping</span>
     </div>
 
+    <!-- Admin & Manager -->
     <div class="menu-card" data-module="vendor" data-role="Admin,Manager">
       📦 <span class="label">Vendor Management</span>
     </div>
 
+    <!-- Admin & Inventory -->
     <div class="menu-card" data-module="inventory" data-role="Admin,Manager,Inventory">
       📋 <span class="label">Inventory Management</span>
     </div>
 
+    <!-- Admin, Kitchen, Manager -->
     <div class="menu-card" data-module="kitchen" data-role="Admin,Manager,Kitchen">
       🍽 <span class="label">Kitchen Orders</span>
     </div>
 
+    <!-- Admin & Manager -->
     <div class="menu-card" data-module="payments" data-role="Admin,Manager,Accounts">
       💳 <span class="label">Payments & Refunds Tracker</span>
     </div>
 
+    <!-- Admin & Manager -->
     <div class="menu-card" data-module="property" data-role="Admin,Manager">
       🏠 <span class="label">Property Management</span>
     </div>
 
+    <!-- Admin only -->
     <div class="menu-card" data-module="dashboard" data-role="Admin">
       📊 <span class="label">Dashboard</span>
     </div>
 
+    <!-- Admin only -->
     <div class="menu-card" data-module="adminpanel" data-role="Admin">
       ⚙️ <span class="label">Admin Panel</span>
     </div>
+
   </nav>
 
   <main class="menu-content" id="content">
-    <h2>Select a module to get started</h2>
-    <p id="detail">Click any module above.</p>
+    <!-- Instead of a placeholder we embed the Booking module directly so you have booking.html content inline.
+         If you keep the JS fetch that loads booking.html dynamically, that fetch will overwrite this content.
+         Remove/adjust the fetch in script.js if you want to rely solely on the embedded module. -->
+
+    <div class="booking-container">
+      <div class="booking-tabs">
+        <button class="tab-btn active" data-tab="reservations">Reservations</button>
+        <button class="tab-btn" data-tab="modify">Modify Bookings</button>
+        <button class="tab-btn" data-tab="create">Create a Booking</button>
+      </div>
+
+      <!-- Reservations Section -->
+      <div id="reservations" class="tab-content active">
+        <h3>Reservations</h3>
+        <div class="date-filter">
+          <label>From: <input type="date" id="fromDate"></label>
+          <label>To: <input type="date" id="toDate"></label>
+          <button id="filterBtn">Filter</button>
+        </div>
+
+        <table class="booking-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Guest Name</th>
+              <th>Contact</th>
+              <th>Room Configuration</th>
+              <th>Availability Comment</th>
+              <th>Room Tariff</th>
+              <th>Check In</th>
+              <th>Check Out</th>
+              <th>Status</th>
+              <th>Last Updated By</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bookingTableBody">
+            <tr><td colspan="11">Select a date range to view bookings.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modify Bookings Section -->
+      <div id="modify" class="tab-content">
+        <h3>Modify Existing Booking</h3>
+        <p>Search and update booking details here.</p>
+      </div>
+
+      <!-- Create Booking Section -->
+      <div id="create" class="tab-content">
+        <h3>Create a New Booking</h3>
+        <form id="createBookingForm">
+          <label>Guest Name: <input type="text" id="guestName" required></label>
+          <label>Check-in: <input type="date" id="checkIn" required></label>
+          <label>Check-out: <input type="date" id="checkOut" required></label>
+          <button type="submit">Create Booking</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal (embedded so it styles with your css and JS handlers can find it) -->
+    <div id="bookingModal" class="modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-modal="true">
+        <button class="close-btn" aria-label="Close">&times;</button>
+        <h3>View / Modify Booking</h3>
+
+        <div id="bookingDetails"></div>
+
+        <hr>
+        <div id="roomContainer">
+          <div class="room-line">
+            <label>Room Type:
+              <select>
+                <option>Deluxe</option>
+                <option>Suite</option>
+                <option>Standard</option>
+              </select>
+            </label>
+            <div class="counter">
+              <button type="button" class="dec">-</button>
+              <input type="number" value="1" min="1" class="room-count" style="width:60px;">
+              <button type="button" class="inc">+</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="add-room-btn" id="addRoom">+ Add Another Room</button>
+
+        <div class="booking-dates">
+          <label>Check In: <input type="date" id="checkInDate"></label>
+          <label>Check Out: <input type="date" id="checkOutDate"></label>
+        </div>
+
+        <div class="guests">
+          <label>Guests:
+            <div class="counter">
+              <button type="button" id="decGuest">-</button>
+              <input type="number" id="guestCount" value="1" min="1" style="width:60px;">
+              <button type="button" id="incGuest">+</button>
+            </div>
+          </label>
+        </div>
+
+        <div class="tariff">
+          <label>Total Tariff: ₹ <input type="number" id="totalTariff" min="0"></label>
+          <label>Advance: ₹ <input type="number" id="advanceAmount" min="0"></label>
+        </div>
+
+        <button class="create-request-btn" id="createBookingRequest">Create Booking Request</button>
+      </div>
+    </div>
+
   </main>
 
-  <script>
-    // =============== ROLE-BASED MENU DISPLAY ===============
-    document.addEventListener("DOMContentLoaded", () => {
-      const userRole = localStorage.getItem("userRole") || "Manager";
-      document.getElementById("userInfo").textContent = `Logged in as: ${userRole}`;
-
-      document.querySelectorAll(".menu-card").forEach(card => {
-        const allowedRoles = card.dataset.role.split(",");
-        if (!allowedRoles.includes(userRole)) {
-          card.style.display = "none";
-        }
-      });
-    });
-
-    // =============== LOGOUT ===============
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("loggedInUser");
-      localStorage.removeItem("userRole");
-      window.location.href = "index.html";
-    });
-
-    // =============== MODULE LOADER ===============
-    const content = document.getElementById("content");
-    document.querySelectorAll(".menu-card").forEach(card => {
-      card.addEventListener("click", async () => {
-        const module = card.dataset.module;
-        content.innerHTML = `<p style="opacity:0.6;">Loading ${module}...</p>`;
-
-        try {
-          // load booking.html or other modules dynamically
-          const response = await fetch(`${module}.html`);
-          if (!response.ok) throw new Error(`Cannot load ${module}.html`);
-          const html = await response.text();
-          content.innerHTML = html;
-          window.scrollTo(0, 0);
-        } catch (err) {
-          console.error(err);
-          content.innerHTML = `<p style="color:red;">Failed to load ${module} module.</p>`;
-        }
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
