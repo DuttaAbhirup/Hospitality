@@ -30,41 +30,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Handle menu clicks
   menuCards.forEach((card) => {
-    card.addEventListener("click", async () => {
+    card.addEventListener("click", () => {
       const module = card.dataset.module;
 
+      // If Booking module
       if (module === "booking") {
-        try {
-          const tpl = document.getElementById("booking-template");
-          const contentEl = document.getElementById("content");
-
-          if (tpl && contentEl) {
-            // Inline template version
-            console.log("Injecting inline booking template...");
-            contentEl.innerHTML = tpl.innerHTML;
-            setTimeout(() => {
-              try {
-                initBookingModule();
-              } catch (e) {
-                console.error("initBookingModule failed:", e);
-              }
-            }, 0);
-          } else {
-            // Fallback to fetch version
-            console.log("No inline template found — fetching booking.html...");
-            const res = await fetch("booking.html");
-            const html = await res.text();
-            contentEl.innerHTML = html;
-            setTimeout(() => {
-              try {
-                initBookingModule();
-              } catch (e) {
-                console.error("initBookingModule failed after fetch:", e);
-              }
-            }, 0);
-          }
-        } catch (err) {
-          console.error("Error loading booking module:", err);
+        console.log("Opening embedded booking module...");
+        // Booking content already in menu.html
+        const bookingContainer = document.querySelector(".booking-container");
+        if (bookingContainer) {
+          document.querySelectorAll(".booking-container, .modal").forEach(el => el.classList.add("active"));
+          initBookingModule(); // ensure handlers are set
         }
       } else {
         // Placeholder for other modules
@@ -77,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
 // ------------------------------
 // Booking Module Functionality
 // ------------------------------
@@ -86,9 +63,9 @@ function initBookingModule() {
   const tabs = document.querySelectorAll(".tab-btn");
   const tabContents = document.querySelectorAll(".tab-content");
   const modal = document.getElementById("bookingModal");
-  const closeModal = modal?.querySelector(".close");
+  const closeModal = modal?.querySelector(".close, .close-btn");
 
-  // Tabs functionality
+  // Tabs switching
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((t) => t.classList.remove("active"));
@@ -98,18 +75,7 @@ function initBookingModule() {
     });
   });
 
-  // Modal functionality
-  if (modal && closeModal) {
-    closeModal.addEventListener("click", () => {
-      modal.classList.remove("active");
-    });
-
-    window.addEventListener("click", (e) => {
-      if (e.target === modal) modal.classList.remove("active");
-    });
-  }
-
-  // Open modal on action click (example)
+  // Modal open/close logic
   const bookingTable = document.getElementById("bookingTableBody");
   bookingTable?.addEventListener("click", (e) => {
     if (e.target.classList.contains("view-btn")) {
@@ -117,27 +83,35 @@ function initBookingModule() {
     }
   });
 
-  // Quantity control
-  document.querySelectorAll(".quantity-control").forEach((qc) => {
-    const minus = qc.querySelector(".minus");
-    const plus = qc.querySelector(".plus");
-    const input = qc.querySelector("input");
-
-    minus?.addEventListener("click", () => {
-      let val = parseInt(input.value);
-      if (val > 1) input.value = val - 1;
-    });
-
-    plus?.addEventListener("click", () => {
-      let val = parseInt(input.value);
-      input.value = val + 1;
-    });
+  closeModal?.addEventListener("click", () => {
+    modal.classList.remove("active");
   });
 
-  // Add another room line
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.remove("active");
+  });
+
+  // Quantity controls
+  function initQuantityControls(scope = document) {
+    scope.querySelectorAll(".quantity-control, .counter").forEach((qc) => {
+      const minus = qc.querySelector(".minus, .dec");
+      const plus = qc.querySelector(".plus, .inc");
+      const input = qc.querySelector("input[type='number']");
+      minus?.addEventListener("click", () => {
+        let val = parseInt(input.value) || 1;
+        if (val > 1) input.value = val - 1;
+      });
+      plus?.addEventListener("click", () => {
+        let val = parseInt(input.value) || 1;
+        input.value = val + 1;
+      });
+    });
+  }
+  initQuantityControls();
+
+  // Add another room
   const addRoomBtn = document.getElementById("addRoom");
   const roomContainer = document.getElementById("roomContainer");
-
   addRoomBtn?.addEventListener("click", () => {
     const newRoom = document.createElement("div");
     newRoom.classList.add("room-line");
@@ -156,5 +130,6 @@ function initBookingModule() {
       </div>
     `;
     roomContainer.appendChild(newRoom);
+    initQuantityControls(newRoom);
   });
 }
