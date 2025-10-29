@@ -1,74 +1,84 @@
+// script.js — robust login + role-based menu
 document.addEventListener('DOMContentLoaded', () => {
 
-  // --- LOGIN PAGE ---
+  /* ----------------------
+     LOGIN PAGE
+     ---------------------- */
   const loginForm = document.getElementById('loginForm');
+
   if (loginForm) {
     const usernameError = document.getElementById('usernameError');
     const passwordError = document.getElementById('passwordError');
 
-    // Hide error messages initially
-    usernameError.style.display = 'none';
-    passwordError.style.display = 'none';
+    // Defensive: if error elements missing, create no-op objects
+    const showEl = (el, text) => {
+      if (!el) return;
+      el.textContent = text || '';
+      el.style.display = text ? 'block' : 'none';
+    };
 
-    // Redirect logged-in users automatically
+    // initialize hidden
+    showEl(usernameError, '');
+    showEl(passwordError, '');
+
+    // auto-redirect if already logged in
     if (localStorage.getItem('isLoggedIn') === 'true') {
-      window.location.href = 'menu.html';
+      console.log('Already logged in — redirecting to menu.html');
+      window.location.href = './menu.html';
+      return;
     }
 
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    loginForm.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      // clear errors
+      showEl(usernameError, '');
+      showEl(passwordError, '');
 
-      // Clear previous errors
-      usernameError.textContent = '';
-      passwordError.textContent = '';
-      usernameError.style.display = 'none';
-      passwordError.style.display = 'none';
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
+      const username = (document.getElementById('username')?.value || '').trim();
+      const password = (document.getElementById('password')?.value || '').trim();
 
       if (!username || !password) {
-        if (!username) {
-          usernameError.textContent = 'Username is required';
-          usernameError.style.display = 'block';
-        }
-        if (!password) {
-          passwordError.textContent = 'Password is required';
-          passwordError.style.display = 'block';
-        }
+        if (!username) showEl(usernameError, 'Username is required');
+        if (!password) showEl(passwordError, 'Password is required');
         return;
       }
 
       try {
-        const response = await fetch('https://n8n.srv850749.hstgr.cloud/webhook/bf58870b-841f-415d-8d58-8522bfc1ca6e', {
+        console.log('Posting login to webhook...', { username });
+        const resp = await fetch('https://n8n.srv850749.hstgr.cloud/webhook/bf58870b-841f-415d-8d58-8522bfc1ca6e', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
 
-        const data = await response.json();
+        if (!resp.ok) {
+          console.error('Webhook returned non-OK:', resp.status, resp.statusText);
+          alert('Login service error. Try again later.');
+          return;
+        }
 
-        /*
-          Expected response format:
-          {
-            status: "Success" | "Wrong Username" | "Wrong Password",
-            username: "John Doe",
-            role: "Admin" | "Manager" | "Staff" | ...
-          }
-        */
+        const data = await resp.json();
+        console.log('Webhook response:', data);
 
-        if (data.status === 'Success') {
+        // expected: { status: "Success"|"Wrong Username"|"Wrong Password", username: "...", role: "..." }
+        const status = (data?.status || '').toString();
+
+        if (status === 'Success') {
           localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userName', data.username);
-          localStorage.setItem('userRole', data.role);
-          window.location.href = 'menu.html';
-        } else if (data.status === 'Wrong Username') {
-          usernameError.textContent = 'Incorrect Username';
-          usernameError.style.display = 'block';
-        } else if (data.status === 'Wrong Password') {
-          passwordError.textContent = 'Incorrect Password';
-          passwordError.style.display = 'block';
+          localStorage.setItem('userName', data.username || username);
+          localStorage.setItem('userRole', data.role || '');
+          // clear errors and redirect
+          showEl(usernameError, '');
+          showEl(passwordError, '');
+          window.location.href = './menu.html';
+        } else if (status === 'Wrong Username') {
+          showEl(usernameError, 'Incorrect Username');
+          showEl(passwordError, 'Incorrect Password'); // you wanted both for this case
+        } else if (status === 'Wrong Password') {
+          showEl(usernameError, '');
+          showEl(passwordError, 'Incorrect Password');
         } else {
+          console.warn('Unexpected login status:', data);
           alert('Unexpected response from server.');
         }
 
@@ -77,71 +87,101 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Failed to login. Please try again later.');
       }
     });
-  }
+  } // end loginForm block
 
-  // --- MENU PAGE ---
-  const menuItems = document.querySelectorAll('.menu-card');
+
+  /* ----------------------
+     MENU PAGE
+     ---------------------- */
+  const menuItemsAll = Array.from(document.querySelectorAll('.menu-card'));
   const contentTitle = document.querySelector('#content h2');
   const contentDetail = document.getElementById('detail');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  if (menuItems.length > 0) {
-    // redirect if not logged in
+  if (menuItemsAll.length > 0) {
+    // protect route
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-      window.location.href = 'index.html';
+      console.log('Not logged in — redirecting to index.html');
+      window.location.href = './index.html';
+      return;
     }
 
-    // Get user info
     const name = localStorage.getItem('userName') || '';
-    const role = localStorage.getItem('userRole') || '';
+    const roleRaw = localStorage.getItem('userRole') || '';
+    const userRole = roleRaw.trim().toLowerCase();
 
-    // Show user info
+    console.log('Menu page loaded for user:', { name, userRole });
+
+    // show user info in topbar
     const userInfo = document.getElementById('userInfo');
     if (userInfo) {
-      userInfo.textContent = `${name} (${role})`;
+      userInfo.innerHTML = name ? `Welcome, ${name} <br/><small>${roleRaw}</small>` : `<small>${roleRaw}</small>`;
     }
 
-    // --- Role-based access control ---
-    const restrictedModules = {
-      'Manager': ['dashboard', 'admin'], // Managers can't see these
-      'Staff': ['admin'], // Example: staff can't see admin
-    };
+    // role-based visibility using data-role attribute on each card
+    // data-role example: "Admin,Manager" or "Admin" or missing (means visible to all)
+    const visibleMenuItems = [];
+    menuItemsAll.forEach(item => {
+      const roleAttr = item.getAttribute('data-role');
+      if (!roleAttr) {
+        // no restriction -> visible
+        item.style.display = '';
+        visibleMenuItems.push(item);
+        return;
+      }
 
-    const hiddenModules = restrictedModules[role] || [];
-    menuItems.forEach(item => {
-      const module = item.getAttribute('data-module');
-      if (hiddenModules.includes(module)) {
+      // parse allowed roles, normalize to lowercase
+      const allowed = roleAttr.split(',').map(r => r.trim().toLowerCase()).filter(Boolean);
+      // if userRole is empty (not present), hide restricted items
+      if (!userRole) {
+        item.style.display = 'none';
+        return;
+      }
+
+      if (allowed.includes(userRole) || allowed.includes('all')) {
+        item.style.display = '';
+        visibleMenuItems.push(item);
+      } else {
         item.style.display = 'none';
       }
     });
 
-    // Restore previously selected module
+    console.log('Visible menu items count:', visibleMenuItems.length);
+
+    // restore active module if it's visible
     const saved = localStorage.getItem('activeModule');
     if (saved) {
       const el = document.querySelector(`.menu-card[data-module="${saved}"]`);
-      if (el) setActive(el, false);
+      if (el && el.style.display !== 'none') {
+        setActive(el, false);
+      } else {
+        // saved module not visible/hide it
+        localStorage.removeItem('activeModule');
+      }
     }
 
-    // Menu click handler
-    menuItems.forEach(item => {
+    // attach handlers only to visible items
+    visibleMenuItems.forEach(item => {
       item.addEventListener('click', () => setActive(item, true));
     });
-  }
+  } // end menu block
 
-  // Logout
+  // logout
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('activeModule');
       localStorage.removeItem('userName');
       localStorage.removeItem('userRole');
-      window.location.href = 'index.html';
+      window.location.href = './index.html';
     });
   }
 
-  // Helper: activate menu item
+  // helper: setActive
   function setActive(element, save) {
-    menuItems.forEach(i => i.classList.remove('active'));
+    const currentMenuItems = Array.from(document.querySelectorAll('.menu-card'));
+    currentMenuItems.forEach(i => i.classList.remove('active'));
+    if (!element) return;
     element.classList.add('active');
 
     const moduleKey = element.getAttribute('data-module') || element.textContent.trim();
@@ -153,4 +193,4 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDetail.textContent = `You opened: ${moduleKey}. (Module implementation pending.)`;
   }
 
-});
+}); // DOMContentLoaded end
