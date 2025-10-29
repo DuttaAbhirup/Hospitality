@@ -108,7 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const name = localStorage.getItem('userName') || '';
     const roleRaw = localStorage.getItem('userRole') || '';
-    const userRole = (roleRaw || '').replace(/\s+/g, '').toLowerCase();
+    const allowed = roleAttr
+  .split(',')
+  .map(r => r.trim().toLowerCase().replace(/\s+/g, ''))
+  .filter(Boolean);
 
     console.log('Menu page loaded for user:', { name, userRole });
 
