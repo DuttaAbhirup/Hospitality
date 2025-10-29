@@ -194,214 +194,182 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* ----------------------
-     BOOKING MODULE
-     ---------------------- */
-  function initBookingModule() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+   BOOKING MODULE
+   ---------------------- */
+function initBookingModule() {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabButtons.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  const filterBtn = document.getElementById('filterBtn');
+  const tbody = document.getElementById('bookingTableBody');
+  if (filterBtn) {
+    filterBtn.addEventListener('click', () => {
+      tbody.innerHTML = `
+        <tr>
+          <td>#B123</td>
+          <td>John Doe</td>
+          <td>9876543210</td>
+          <td>Deluxe Suite</td>
+          <td>Available</td>
+          <td>₹4500</td>
+          <td>2025-10-29</td>
+          <td>2025-10-31</td>
+          <td>Confirmed</td>
+          <td>Admin</td>
+          <td><button class="view-btn">View</button></td>
+        </tr>
+      `;
+
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', openBookingModal);
       });
     });
+  }
 
-    const filterBtn = document.getElementById('filterBtn');
-    const tbody = document.getElementById('bookingTableBody');
-    if (filterBtn) {
-      filterBtn.addEventListener('click', () => {
-        tbody.innerHTML = `
-          <tr>
-            <td>#B123</td>
-            <td>John Doe</td>
-            <td>9876543210</td>
-            <td>Deluxe Suite</td>
-            <td>Available</td>
-            <td>₹4500</td>
-            <td>2025-10-29</td>
-            <td>2025-10-31</td>
-            <td>Confirmed</td>
-            <td>Admin</td>
-            <td><button class="view-btn">View</button></td>
-          </tr>
-        `;
+  const createBookingForm = document.getElementById('createBookingForm');
+  if (createBookingForm) {
+    createBookingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Booking created successfully!');
+      createBookingForm.reset();
+    });
+  }
 
-        document.querySelectorAll('.view-btn').forEach(btn => {
-          btn.addEventListener('click', openBookingModal);
-        });
-      });
-    }
+  // --- Modal handling ---
+  function openBookingModal() {
+    const modalHTML = `
+      <div class="modal active" id="bookingModal">
+        <div class="modal-content" role="dialog" aria-modal="true">
+          <div class="modal-header">
+            <h3>Booking Details</h3>
+            <button class="close-btn" id="closeModal" aria-label="Close modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Booking ID:</strong> #B123</p>
+            <p><strong>Guest Name:</strong> John Doe</p>
+            <p><strong>Contact:</strong> 9876543210</p>
+            <p><strong>Room Configuration:</strong> Deluxe Suite</p>
+            <p><strong>Status:</strong> Confirmed</p>
 
-    const createBookingForm = document.getElementById('createBookingForm');
-    if (createBookingForm) {
-      createBookingForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('Booking created successfully!');
-        createBookingForm.reset();
-      });
-    }
-
-    // --- Modal handling ---
-    function openBookingModal() {
-      const modalHTML = `
-        <div class="modal active" id="bookingModal">
-          <div class="modal-content" role="dialog" aria-modal="true">
-            <div class="modal-header">
-              <h3>Booking Details</h3>
-              <button class="close-btn" id="closeModal" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-              <p><strong>Booking ID:</strong> #B123</p>
-              <p><strong>Guest Name:</strong> John Doe</p>
-              <p><strong>Contact:</strong> 9876543210</p>
-              <p><strong>Room Configuration:</strong> Deluxe Suite</p>
-              <p><strong>Status:</strong> Confirmed</p>
-
-              <label>Room Type:</label>
-              <div id="roomContainer">
-                <div class="room-line">
-                  <select>
-                    <option>Deluxe</option>
-                    <option>Suite</option>
-                    <option>Standard</option>
-                  </select>
-                  <div class="counter">
-                    <button type="button" class="dec">-</button>
-                    <input type="number" value="1" min="1" class="room-count" style="width:60px;">
-                    <button type="button" class="inc">+</button>
-                  </div>
+            <label>Room Type:</label>
+            <div id="roomContainer">
+              <div class="room-line">
+                <select>
+                  <option>Deluxe</option>
+                  <option>Suite</option>
+                  <option>Standard</option>
+                </select>
+                <div class="counter">
+                  <button type="button" class="dec">-</button>
+                  <input type="number" value="1" min="1" class="room-count" style="width:60px;">
+                  <button type="button" class="inc">+</button>
                 </div>
               </div>
-              <button class="add-room-btn" id="addRoom">+ Add Another Room</button>
-
-              <label>Check-in Date:</label>
-              <input type="date" id="checkInDate">
-              <label>Check-out Date:</label>
-              <input type="date" id="checkOutDate">
-
-              <label>Guests:</label>
-              <div class="counter">
-                <button type="button" id="decGuest">-</button>
-                <input type="number" id="guestCount" value="2" min="1" style="width:60px;">
-                <button type="button" id="incGuest">+</button>
-              </div>
-
-              <label>Total Tariff:</label>
-              <div style="display:flex;align-items:center;gap:5px;">
-                <span>₹</span><input type="number" id="totalTariff" placeholder="0">
-              </div>
-
-              <label>Advance Amount:</label>
-              <div style="display:flex;align-items:center;gap:5px;">
-                <span>₹</span><input type="number" id="advanceAmount" placeholder="0">
-              </div>
-
-              <button class="create-request-btn">Create Booking Request</button>
             </div>
+            <button class="add-room-btn" id="addRoom">+ Add Another Room</button>
+
+            <label>Check-in Date:</label>
+            <input type="date" id="checkInDate">
+            <label>Check-out Date:</label>
+            <input type="date" id="checkOutDate">
+
+            <label>Guests:</label>
+            <div class="counter">
+              <button type="button" id="decGuest">-</button>
+              <input type="number" id="guestCount" value="2" min="1" style="width:60px;">
+              <button type="button" id="incGuest">+</button>
+            </div>
+
+            <label>Total Tariff:</label>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <span>₹</span><input type="number" id="totalTariff" placeholder="0">
+            </div>
+
+            <label>Advance Amount:</label>
+            <div style="display:flex;align-items:center;gap:5px;">
+              <span>₹</span><input type="number" id="advanceAmount" placeholder="0">
+            </div>
+
+            <button class="create-request-btn">Create Booking Request</button>
           </div>
         </div>
-      `;
-      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-      const modal = document.getElementById('bookingModal');
-      const closeModal = document.getElementById('closeModal');
+    const modal = document.getElementById('bookingModal');
+    const closeModal = document.getElementById('closeModal');
+    const addRoomBtn = document.getElementById('addRoom');
 
-      // close via top-left button
-      closeModal.addEventListener('click', () => {
-        cleanupModal();
+    // Close button
+    closeModal.addEventListener('click', cleanupModal);
+
+    // Close on outside click
+    modal.addEventListener('click', (ev) => {
+      if (ev.target === modal) cleanupModal();
+    });
+
+    // Close on Esc
+    const escHandler = (ev) => {
+      if (ev.key === 'Escape') cleanupModal();
+    };
+    document.addEventListener('keydown', escHandler);
+
+    // Attach counter handlers
+    function attachCounterHandlers(container) {
+      container.querySelectorAll('.inc').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const input = btn.parentElement.querySelector('.room-count');
+          input.value = Math.max(parseInt(input.value || '0') + 1, 1);
+        });
       });
-
-      // close when clicking outside modal-content
-      modal.addEventListener('click', (ev) => {
-        if (ev.target === modal) cleanupModal();
+      container.querySelectorAll('.dec').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const input = btn.parentElement.querySelector('.room-count');
+          input.value = Math.max(parseInt(input.value || '1') - 1, 1);
+        });
       });
+    }
 
-      // close on Escape key
-      const escHandler = (ev) => {
-        if (ev.key === 'Escape') cleanupModal();
-      };
-      document.addEventListener('keydown', escHandler);
+    attachCounterHandlers(document.getElementById('roomContainer'));
 
-      // helper: attach inc/dec handlers for a given container (works for cloned lines too)
-      function attachCounterHandlers(container) {
-        container.querySelectorAll('.inc').forEach(btn => {
-          btn.removeEventListener('click', incHandler); // safe-remove in case already attached
-          btn.addEventListener('click', incHandler);
-        });
-        container.querySelectorAll('.dec').forEach(btn => {
-          btn.removeEventListener('click', decHandler);
-          btn.addEventListener('click', decHandler);
-        });
-      }
+    // Add another room (clone)
+    addRoomBtn.addEventListener('click', () => {
+      const container = document.getElementById('roomContainer');
+      const clone = container.firstElementChild.cloneNode(true);
+      const input = clone.querySelector('.room-count');
+      input.value = 1;
+      container.appendChild(clone);
+      attachCounterHandlers(clone);
+    });
 
-      function incHandler(e) {
-        const input = e.currentTarget.parentElement.querySelector('.room-count');
-        if (!input) return;
-        input.value = Math.max(parseInt(input.value || '0') + 1, 1);
-      }
-      function decHandler(e) {
-        const input = e.currentTarget.parentElement.querySelector('.room-count');
-        if (!input) return;
-        const val = Math.max(parseInt(input.value || '0') - 1, 1);
-        input.value = val;
-      }
+    // Guest controls
+    const incGuest = document.getElementById('incGuest');
+    const decGuest = document.getElementById('decGuest');
+    incGuest.addEventListener('click', () => {
+      const guestInput = document.getElementById('guestCount');
+      guestInput.value = parseInt(guestInput.value) + 1;
+    });
+    decGuest.addEventListener('click', () => {
+      const guestInput = document.getElementById('guestCount');
+      if (parseInt(guestInput.value) > 1) guestInput.value = parseInt(guestInput.value) - 1;
+    });
 
-      // Attach handlers to initial counters
-      attachCounterHandlers(document.getElementById('roomContainer'));
-
-      // Add room logic - clones the room-line and attaches handlers to its buttons
-      const addRoomBtn = document.getElementById('addRoom');
-      addRoomBtn.addEventListener('click', () => {
-        const container = document.getElementById('roomContainer');
-        const line = document.createElement('div');
-        line.classList.add('room-line');
-        line.innerHTML = `
-          <select>
-            <option>Deluxe</option>
-            <option>Suite</option>
-            <option>Standard</option>
-          </select>
-          <div class="counter">
-            <button type="button" class="dec">-</button>
-            <input type="number" value="1" min="1" class="room-count" style="width:60px;">
-            <button type="button" class="inc">+</button>
-          </div>
-        `;
-        container.appendChild(line);
-        // attach handlers to the newly added line
-        attachCounterHandlers(line);
-      });
-
-      // Guest inc/dec handlers
-      const incGuest = document.getElementById('incGuest');
-      const decGuest = document.getElementById('decGuest');
-      if (incGuest) {
-        incGuest.addEventListener('click', () => {
-          const guestInput = document.getElementById('guestCount');
-          guestInput.value = parseInt(guestInput.value || '0') + 1;
-        });
-      }
-      if (decGuest) {
-        decGuest.addEventListener('click', () => {
-          const guestInput = document.getElementById('guestCount');
-          if (parseInt(guestInput.value || '0') > 1) {
-            guestInput.value = parseInt(guestInput.value || '0') - 1;
-          }
-        });
-      }
-
-      // cleanup function to remove modal and listeners
-      function cleanupModal() {
-        // remove modal node
-        if (modal && modal.parentElement) modal.parentElement.removeChild(modal);
-        // remove esc handler
-        document.removeEventListener('keydown', escHandler);
-        // remove any other attached handlers (they were closures, removing modal is enough)
-      }
+    function cleanupModal() {
+      document.removeEventListener('keydown', escHandler);
+      modal.remove();
     }
   }
+}
+
 
 }); // DOMContentLoaded end
