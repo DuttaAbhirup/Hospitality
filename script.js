@@ -148,28 +148,30 @@ document.addEventListener('DOMContentLoaded', () => {
         setActive(item, true);
         const module = item.dataset.module;
 
-        if (module === 'booking') {
-          try {
-            const res = await fetch('booking.html');
-            const html = await res.text();
-            document.getElementById('content').innerHTML = html;
+       if (module === 'booking') {
+  try {
+    const res = await fetch('booking.html');
+    const html = await res.text();
+    document.getElementById('content').innerHTML = html;
 
-// If booking.html included a static modal, move it to document.body so modal CSS/overlay behaves properly
-const maybeModal = document.getElementById('bookingModal');
-if (maybeModal && maybeModal.parentElement !== document.body) {
-  document.body.appendChild(maybeModal);
-  const closeControl = maybeModal.querySelector('.close, .close-btn, #closeModal');
-if (closeControl) closeControl.onclick = cleanupModal;
-  // Reflow fix: force browser to apply the CSS properly
-  void maybeModal.offsetWidth;
-}
+    // If booking.html included a static modal, move it to document.body so modal CSS/overlay behaves properly
+    const maybeModal = document.getElementById('bookingModal');
+    if (maybeModal && maybeModal.parentElement !== document.body) {
+      document.body.appendChild(maybeModal);
+      const closeControl = maybeModal.querySelector('.close, .close-btn, #closeModal');
+      if (closeControl) closeControl.onclick = cleanupModal;
+      // Reflow fix: force browser to apply the CSS properly
+      void maybeModal.offsetWidth;
+    }
 
-}
+    // Initialize the booking module after content load
+    initBookingModule();
 
-initBookingModule();
-          } catch (err) {
-            console.error('Error loading booking module:', err);
-          }
+  } catch (err) {
+    console.error('Error loading booking module:', err);
+  }
+
+
         } else {
           document.getElementById('content').innerHTML = `
             <h2>${item.querySelector('.label')?.textContent || module}</h2>
