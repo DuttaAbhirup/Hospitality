@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const name = localStorage.getItem('userName') || '';
     const roleRaw = localStorage.getItem('userRole') || '';
-    const userRole = roleRaw.trim().toLowerCase();
+    const userRole = (roleRaw || '').replace(/\s+/g, '').toLowerCase();
 
     console.log('Menu page loaded for user:', { name, userRole });
 
