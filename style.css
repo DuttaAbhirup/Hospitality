@@ -1,24 +1,28 @@
-/* ---------- Base ---------- */
+/* ---------- Root Variables ---------- */
 :root {
   --blue: #0077ff;
+  --blue-dark: #005fd1;
   --light-bg: #f9fafb;
   --menu-bg: #f1f5fb;
-  --card-white: #ffffff;
+  --white: #ffffff;
+  --gray: #e0e0e0;
   --danger: #ff4d4d;
+  --success: #28a745;
+  --text: #222;
 }
 
-
-
-* { box-sizing: border-box; }
-html,body { height: 100%; margin: 0; }
+/* ---------- Global Reset ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
 body {
-  font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background-color: var(--light-bg);
-  color: #222;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--light-bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ---------- LOGIN PAGE ---------- */
 .login-page {
   display: flex;
   justify-content: center;
@@ -28,7 +32,7 @@ body {
 }
 
 .login-container {
-  background: #fff;
+  background: var(--white);
   padding: 2rem;
   width: 320px;
   border-radius: 1rem;
@@ -36,7 +40,7 @@ body {
   text-align: center;
 }
 
-.login-container .logo {
+.logo {
   width: 80px;
   height: auto;
   margin-bottom: 1rem;
@@ -45,13 +49,10 @@ body {
 .login-container form {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem; /* spacing between inputs/buttons */
+  gap: 0.6rem;
 }
 
-.login-container form input {
-  display: block;
-  width: 100%;
-  margin: 0.6rem 0;
+.login-container input {
   padding: 0.8rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -59,38 +60,36 @@ body {
   outline: none;
 }
 
-.error {
-  color: #cc0000;
-  font-size: 0.85rem;
-  margin: 0.2rem 0 0.6rem 0;  /* small top margin, bigger bottom margin */
-  min-height: 1em;           /* reserve space for text */
-  display: none;             /* hide by default */
+.login-container input:focus {
+  border-color: var(--blue);
 }
 
+.error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  min-height: 1em;
+  display: none;
+}
 
-.login-container form button {
-  width: 100%;
-  padding: 0.8rem;
+.login-container button {
   background: var(--blue);
   color: #fff;
+  padding: 0.8rem;
   border: none;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s;
 }
 
-.login-container form button:hover {
-  background: #005bcc;
+.login-container button:hover {
+  background: var(--blue-dark);
 }
 
-
-/* ---------- Top Blue Bar (fixed) ---------- */
+/* ---------- TOPBAR ---------- */
 .topbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 64px;
   background: var(--blue);
   color: #fff;
@@ -108,7 +107,6 @@ body {
   font-weight: 600;
 }
 
-/* logout */
 #logoutBtn {
   background: var(--danger);
   color: #fff;
@@ -117,83 +115,76 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+  transition: background 0.2s;
 }
+
 #logoutBtn:hover { background: #cc0000; }
 
-/* ---------- Menu bar ---------- */
-/* ensure content not hidden by header: add top offset to menu */
+/* ---------- MENU ---------- */
 .menu-page { padding-top: 64px; }
 
-/* horizontal toolbar */
 .menu-grid {
   display: flex;
   gap: 12px;
-  align-items: flex-start; /* align top of items */
   padding: 12px;
   background: var(--menu-bg);
   border-bottom: 1px solid #e6e9ef;
-  flex-wrap: wrap; /* allow items to wrap to next line if needed */
-  overflow-x: visible; /* remove horizontal scroll */
+  flex-wrap: wrap;
 }
 
-/* menu card */
 .menu-card {
   display: flex;
-  flex-direction: column; /* stack icon and label if any */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--card-white);
+  background: var(--white);
   border-radius: 10px;
   padding: 10px;
-  width: 160px;       /* fixed width for all buttons */
-  height: 80px;       /* fixed height for all buttons */
+  width: 160px;
+  height: 80px;
   cursor: pointer;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+  transition: transform 0.18s, box-shadow 0.18s, background 0.18s, color 0.18s;
   text-align: center;
-  word-wrap: break-word;   /* wrap long text */
-  white-space: normal;     /* allow wrapping */
 }
+
 .menu-card .label {
-  display: block;
   font-size: 0.95rem;
-  line-height: 1.2rem;
-  word-break: break-word;
+  margin-top: 4px;
 }
-/* hover */
+
 .menu-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 14px rgba(0,0,0,0.10);
 }
 
-/* active state */
 .menu-card.active {
   background: var(--blue);
   color: #fff;
   box-shadow: 0 6px 18px rgba(0,119,255,0.22);
-  transform: translateY(-4px);
 }
 
-/* small screens: reduce card size */
-@media (max-width:560px) {
-  .menu-card { min-width: 130px; padding: 8px 12px; font-size: 0.9rem; }
+@media (max-width: 560px) {
+  .menu-card { width: 130px; font-size: 0.9rem; }
   .topbar h1 { font-size: 1rem; }
 }
 
-/* ---------- main content ---------- */
+/* ---------- MAIN CONTENT ---------- */
 .menu-content {
   padding: 28px 20px;
   max-width: 1100px;
   margin: 0 auto;
-  color: #333;
 }
 
-/* Booking Module */
+/* ---------- BOOKING MODULE ---------- */
 .booking-container {
   padding: 1rem;
   font-family: "Segoe UI", sans-serif;
   color: #333;
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 /* Tabs */
@@ -201,19 +192,21 @@ body {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  border-bottom: 2px solid #eee;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
   padding: 0.5rem 1rem;
   border: none;
-  background: #e0e0e0;
+  background: var(--gray);
+  border-radius: 5px 5px 0 0;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.2s;
 }
 
 .tab-btn.active {
-  background: #0077ff;
+  background: var(--blue);
   color: #fff;
 }
 
@@ -237,18 +230,19 @@ body {
   display: flex;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .date-filter input[type="date"],
 .date-filter button {
-  padding: 0.4rem 0.6rem;
+  padding: 0.5rem 0.7rem;
   font-size: 0.9rem;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
 .date-filter button {
-  background: #0077ff;
+  background: var(--blue);
   color: #fff;
   border: none;
   cursor: pointer;
@@ -256,76 +250,63 @@ body {
 }
 
 .date-filter button:hover {
-  background: #005fd1;
+  background: var(--blue-dark);
 }
 
-/* Table Styling */
+/* Table */
 .booking-table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
-  border-radius: 5px;
+  border-radius: 6px;
   overflow: hidden;
 }
 
 .booking-table th, .booking-table td {
   border: 1px solid #ddd;
   padding: 10px;
-  text-align: left;
   font-size: 0.95rem;
 }
 
 .booking-table th {
-  background-color: #f5f5f5;
+  background: #f5f5f5;
   font-weight: 600;
 }
 
-.booking-table tbody tr:hover {
+.booking-table tr:hover {
   background: #f9f9f9;
 }
 
-/* View Button */
 .view-btn {
-  background: #0077ff;
+  background: var(--blue);
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .view-btn:hover {
-  background: #005fd1;
+  background: var(--blue-dark);
 }
 
-/* Popup Modal */
+/* ---------- MODAL ---------- */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none;  /* hide by default */
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0,0,0,0.45);
   z-index: 999;
 }
 
-
-.modal.active {
-  display: flex; /* visible when active */
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
+.modal.active { display: flex; animation: fadeIn 0.25s ease; }
 
 .modal-content {
-  background: #fff;
+  background: var(--white);
   padding: 1.5rem;
   border-radius: 10px;
   width: 600px;
@@ -334,93 +315,73 @@ body {
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+@media (max-width: 640px) {
+  .modal-content { width: 90%; padding: 1rem; }
 }
 
-.modal-header h3 {
-  margin: 0;
-  color: #0077ff;
-}
-
-.close-btn {
-  background: none;
-  border: none;
+.close {
+  position: absolute;
+  top: 10px; right: 15px;
   font-size: 1.5rem;
   cursor: pointer;
+  color: #666;
 }
+.close:hover { color: var(--danger); }
 
-/* Form Fields */
-.modal-body label {
-  display: block;
-  margin-top: 10px;
-  font-weight: 500;
-}
-
-.modal-body input,
-.modal-body select {
-  width: 100%;
-  padding: 6px;
-  margin-top: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
+/* Room & Quantity Controls */
 .room-line {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
-.room-line select,
-.room-line input {
-  flex: 1;
-}
-
-.counter {
+.quantity-control {
   display: flex;
   align-items: center;
   gap: 0.25rem;
 }
 
-.counter button {
-  background: #0077ff;
-  color: white;
+.quantity-control button {
+  background: var(--blue);
+  color: #fff;
   border: none;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.counter button:hover {
-  background: #005fd1;
+.quantity-control button:hover {
+  background: var(--blue-dark);
 }
 
-/* Add Room Button */
-.add-room-btn {
-  background: #28a745;
-  color: white;
+.quantity-control input {
+  width: 50px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Add Room */
+#addRoom {
+  background: var(--success);
+  color: #fff;
   border: none;
-  margin-top: 10px;
   padding: 6px 12px;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
 }
+#addRoom:hover { background: #1e8f3e; }
 
-.add-room-btn:hover {
-  background: #1e8f3e;
-}
-
-/* Create Booking Request Button */
-.create-request-btn {
+/* Booking Buttons */
+#createBookingRequest {
   display: block;
   width: 100%;
   margin-top: 15px;
-  background: #0077ff;
-  color: white;
+  background: var(--blue);
+  color: #fff;
   border: none;
   padding: 10px;
   border-radius: 8px;
@@ -429,6 +390,6 @@ body {
   transition: background 0.3s;
 }
 
-.create-request-btn:hover {
-  background: #005fd1;
+#createBookingRequest:hover {
+  background: var(--blue-dark);
 }
