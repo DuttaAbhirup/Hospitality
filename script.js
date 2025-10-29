@@ -157,9 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // If booking.html included a static modal, move it to document.body so modal CSS/overlay behaves properly
 const maybeModal = document.getElementById('bookingModal');
 if (maybeModal && maybeModal.parentElement !== document.body) {
-  if (!document.body.contains(maybeModal)) {
   document.body.appendChild(maybeModal);
+  // Reflow fix: force browser to apply the CSS properly
+  void maybeModal.offsetWidth;
 }
+
 }
 
 initBookingModule();
@@ -335,21 +337,20 @@ function initBookingModule() {
     // helper to attach inc/dec for a container (container may be roomContainer or cloned room-line)
     function attachCounterHandlers(container) {
       if (!container) return;
-      container.querySelectorAll('.inc').forEach(btn => {
-        // use onclick to replace previous handlers and keep scope simple
-        btn.onclick = () => {
-          const input = btn.parentElement.querySelector('.room-count');
-          if (!input) return;
-          input.value = Math.max(parseInt(input.value || '0') + 1, 1);
-        };
-      });
-      container.querySelectorAll('.dec').forEach(btn => {
-        btn.onclick = () => {
-          const input = btn.parentElement.querySelector('.room-count');
-          if (!input) return;
-          input.value = Math.max(parseInt(input.value || '1') - 1, 1);
-        };
-      });
+      container.querySelectorAll('.plus, .inc').forEach(btn => {
+  btn.onclick = () => {
+    const input = btn.parentElement.querySelector('input[type="number"]');
+    if (!input) return;
+    input.value = Math.max(parseInt(input.value || '0') + 1, 1);
+  };
+});
+      container.querySelectorAll('.minus, .dec').forEach(btn => {
+  btn.onclick = () => {
+    const input = btn.parentElement.querySelector('input[type="number"]');
+    if (!input) return;
+    input.value = Math.max(parseInt(input.value || '1') - 1, 1);
+  };
+});
     }
 
     // locate roomContainer inside modal (works whether modal was static or dynamic)
