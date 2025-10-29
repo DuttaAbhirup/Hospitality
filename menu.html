@@ -10,7 +10,7 @@
   <header class="topbar">
     <div class="brand">
       <h1>Hospitality Suite</h1>
-       <p id="userInfo" style="margin:0; font-size:0.9rem;"></p>
+      <p id="userInfo" style="margin:0; font-size:0.9rem;"></p>
     </div>
     <div class="actions">
       <button id="logoutBtn">Logout</button>
@@ -18,15 +18,52 @@
   </header>
 
   <nav class="menu-grid" role="navigation" aria-label="Main modules">
-    <div class="menu-card" data-module="booking">🏨 <span class="label">Booking Management</span></div>
-    <div class="menu-card" data-module="housekeeping">🧹 <span class="label">Housekeeping</span></div>
-    <div class="menu-card" data-module="vendor">📦 <span class="label">Vendor Management</span></div>
-    <div class="menu-card" data-module="inventory">📋 <span class="label">Inventory Management</span></div>
-    <div class="menu-card" data-module="kitchen">🍽 <span class="label">Kitchen Orders</span></div>
-    <div class="menu-card" data-module="payments">💳 <span class="label">Payments & Refunds Tracker</span></div>
-    <div class="menu-card" data-module="property">🏠 <span class="label">Property Management</span></div>
-    <div class="menu-card" data-module="dashboard">📊 <span class="label">Dashboard</span></div>
-     <div class="menu-card" data-module="dashboard">📊 <span class="label">Admin Panel</span></div>
+
+    <!-- Admin & Manager -->
+    <div class="menu-card" data-module="booking" data-role="Admin,Manager">
+      🏨 <span class="label">Booking Management</span>
+    </div>
+
+    <!-- Admin & Housekeeping -->
+    <div class="menu-card" data-module="housekeeping" data-role="Admin,Housekeeping,Manager">
+      🧹 <span class="label">Housekeeping</span>
+    </div>
+
+    <!-- Admin & Manager -->
+    <div class="menu-card" data-module="vendor" data-role="Admin,Manager">
+      📦 <span class="label">Vendor Management</span>
+    </div>
+
+    <!-- Admin & Inventory -->
+    <div class="menu-card" data-module="inventory" data-role="Admin,Manager,Inventory">
+      📋 <span class="label">Inventory Management</span>
+    </div>
+
+    <!-- Admin, Kitchen, Manager -->
+    <div class="menu-card" data-module="kitchen" data-role="Admin,Manager,Kitchen">
+      🍽 <span class="label">Kitchen Orders</span>
+    </div>
+
+    <!-- Admin & Manager -->
+    <div class="menu-card" data-module="payments" data-role="Admin,Manager,Accounts">
+      💳 <span class="label">Payments & Refunds Tracker</span>
+    </div>
+
+    <!-- Admin & Manager -->
+    <div class="menu-card" data-module="property" data-role="Admin,Manager">
+      🏠 <span class="label">Property Management</span>
+    </div>
+
+    <!-- Admin only -->
+    <div class="menu-card" data-module="dashboard" data-role="Admin">
+      📊 <span class="label">Dashboard</span>
+    </div>
+
+    <!-- Admin only -->
+    <div class="menu-card" data-module="adminpanel" data-role="Admin">
+      ⚙️ <span class="label">Admin Panel</span>
+    </div>
+
   </nav>
 
   <main class="menu-content" id="content">
