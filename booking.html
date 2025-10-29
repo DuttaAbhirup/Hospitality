@@ -1,0 +1,49 @@
+<!-- booking.html -->
+<div class="booking-container">
+  <div class="booking-tabs">
+    <button class="tab-btn active" data-tab="reservations">Reservations</button>
+    <button class="tab-btn" data-tab="modify">Modify Bookings</button>
+    <button class="tab-btn" data-tab="create">Create a Booking</button>
+  </div>
+
+  <!-- Reservations Section -->
+  <div id="reservations" class="tab-content active">
+    <h3>Reservations</h3>
+    <div class="date-filter">
+      <label>From: <input type="date" id="fromDate"></label>
+      <label>To: <input type="date" id="toDate"></label>
+      <button id="filterBtn">Filter</button>
+    </div>
+    <table class="booking-table">
+      <thead>
+        <tr>
+          <th>Booking ID</th>
+          <th>Guest Name</th>
+          <th>Check-in</th>
+          <th>Check-out</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="bookingTableBody">
+        <tr><td colspan="5">Select a date range to view bookings.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modify Bookings Section -->
+  <div id="modify" class="tab-content">
+    <h3>Modify Existing Booking</h3>
+    <p>Search and update booking details here.</p>
+  </div>
+
+  <!-- Create Booking Section -->
+  <div id="create" class="tab-content">
+    <h3>Create a New Booking</h3>
+    <form id="createBookingForm">
+      <label>Guest Name: <input type="text" id="guestName" required></label>
+      <label>Check-in: <input type="date" id="checkIn" required></label>
+      <label>Check-out: <input type="date" id="checkOut" required></label>
+      <button type="submit">Create Booking</button>
+    </form>
+  </div>
+</div>
