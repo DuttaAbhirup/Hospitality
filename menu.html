@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="menu-page">
+  <!-- Top Header -->
   <header class="topbar">
     <div class="brand">
       <h1>Hospitality Suite</h1>
@@ -17,60 +18,53 @@
     </div>
   </header>
 
+  <!-- Main Menu -->
   <nav class="menu-grid" role="navigation" aria-label="Main modules">
-
-    <!-- Admin & Manager -->
     <div class="menu-card" data-module="booking" data-role="Admin,Manager">
       🏨 <span class="label">Booking Management</span>
     </div>
 
-    <!-- Admin & Housekeeping -->
     <div class="menu-card" data-module="housekeeping" data-role="Admin,Housekeeping,Manager">
       🧹 <span class="label">Housekeeping</span>
     </div>
 
-    <!-- Admin & Manager -->
     <div class="menu-card" data-module="vendor" data-role="Admin,Manager">
       📦 <span class="label">Vendor Management</span>
     </div>
 
-    <!-- Admin & Inventory -->
     <div class="menu-card" data-module="inventory" data-role="Admin,Manager,Inventory">
       📋 <span class="label">Inventory Management</span>
     </div>
 
-    <!-- Admin, Kitchen, Manager -->
     <div class="menu-card" data-module="kitchen" data-role="Admin,Manager,Kitchen">
       🍽 <span class="label">Kitchen Orders</span>
     </div>
 
-    <!-- Admin & Manager -->
     <div class="menu-card" data-module="payments" data-role="Admin,Manager,Accounts">
       💳 <span class="label">Payments & Refunds Tracker</span>
     </div>
 
-    <!-- Admin & Manager -->
     <div class="menu-card" data-module="property" data-role="Admin,Manager">
       🏠 <span class="label">Property Management</span>
     </div>
 
-    <!-- Admin only -->
     <div class="menu-card" data-module="dashboard" data-role="Admin">
       📊 <span class="label">Dashboard</span>
     </div>
 
-    <!-- Admin only -->
     <div class="menu-card" data-module="adminpanel" data-role="Admin">
       ⚙️ <span class="label">Admin Panel</span>
     </div>
-
   </nav>
 
+  <!-- Dynamic content section -->
   <main class="menu-content" id="content">
-    <!-- Instead of a placeholder we embed the Booking module directly so you have booking.html content inline.
-         If you keep the JS fetch that loads booking.html dynamically, that fetch will overwrite this content.
-         Remove/adjust the fetch in script.js if you want to rely solely on the embedded module. -->
+    <h2>Select a module to get started</h2>
+    <p id="detail">Click any module above.</p>
+  </main>
 
+  <!-- Inline Booking Module (used when Booking Management is clicked) -->
+  <template id="booking-template">
     <div class="booking-container">
       <div class="booking-tabs">
         <button class="tab-btn active" data-tab="reservations">Reservations</button>
@@ -127,10 +121,10 @@
       </div>
     </div>
 
-    <!-- Modal (embedded so it styles with your css and JS handlers can find it) -->
+    <!-- Modal -->
     <div id="bookingModal" class="modal" aria-hidden="true">
       <div class="modal-content" role="dialog" aria-modal="true">
-        <button class="close-btn" aria-label="Close">&times;</button>
+        <span class="close" aria-label="Close">&times;</span>
         <h3>View / Modify Booking</h3>
 
         <div id="bookingDetails"></div>
@@ -145,15 +139,15 @@
                 <option>Standard</option>
               </select>
             </label>
-            <div class="counter">
-              <button type="button" class="dec">-</button>
-              <input type="number" value="1" min="1" class="room-count" style="width:60px;">
-              <button type="button" class="inc">+</button>
+            <div class="quantity-control">
+              <button class="minus">-</button>
+              <input type="number" min="1" value="1">
+              <button class="plus">+</button>
             </div>
           </div>
         </div>
 
-        <button class="add-room-btn" id="addRoom">+ Add Another Room</button>
+        <button id="addRoom">+ Add Another Room</button>
 
         <div class="booking-dates">
           <label>Check In: <input type="date" id="checkInDate"></label>
@@ -162,10 +156,10 @@
 
         <div class="guests">
           <label>Guests:
-            <div class="counter">
-              <button type="button" id="decGuest">-</button>
-              <input type="number" id="guestCount" value="1" min="1" style="width:60px;">
-              <button type="button" id="incGuest">+</button>
+            <div class="quantity-control">
+              <button id="guestMinus">-</button>
+              <input type="number" min="1" value="1" id="guestCount">
+              <button id="guestPlus">+</button>
             </div>
           </label>
         </div>
@@ -175,11 +169,10 @@
           <label>Advance: ₹ <input type="number" id="advanceAmount" min="0"></label>
         </div>
 
-        <button class="create-request-btn" id="createBookingRequest">Create Booking Request</button>
+        <button id="createBookingRequest">Create Booking Request</button>
       </div>
     </div>
-
-  </main>
+  </template>
 
   <script src="script.js"></script>
 </body>
