@@ -248,10 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function openBookingModal() {
       const modalHTML = `
         <div class="modal active" id="bookingModal">
-          <div class="modal-content">
+          <div class="modal-content" role="dialog" aria-modal="true">
             <div class="modal-header">
               <h3>Booking Details</h3>
-              <button class="close-btn" id="closeModal">&times;</button>
+              <button class="close-btn" id="closeModal" aria-label="Close modal">&times;</button>
             </div>
             <div class="modal-body">
               <p><strong>Booking ID:</strong> #B123</p>
@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   </select>
                   <div class="counter">
                     <button type="button" class="dec">-</button>
-                    <input type="number" value="1" min="1" style="width:60px;">
+                    <input type="number" value="1" min="1" class="room-count" style="width:60px;">
                     <button type="button" class="inc">+</button>
                   </div>
                 </div>
@@ -308,10 +308,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const modal = document.getElementById('bookingModal');
       const closeModal = document.getElementById('closeModal');
-      closeModal.addEventListener('click', () => modal.remove());
 
-      // Add room logic
-      document.getElementById('addRoom').addEventListener('click', () => {
+      // close via top-left button
+      closeModal.addEventListener('click', () => {
+        cleanupModal();
+      });
+
+      // close when clicking outside modal-content
+      modal.addEventListener('click', (ev) => {
+        if (ev.target === modal) cleanupModal();
+      });
+
+      // close on Escape key
+      const escHandler = (ev) => {
+        if (ev.key === 'Escape') cleanupModal();
+      };
+      document.addEventListener('keydown', escHandler);
+
+      // helper: attach inc/dec handlers for a given container (works for cloned lines too)
+      function attachCounterHandlers(container) {
+        container.querySelectorAll('.inc').forEach(btn => {
+          btn.removeEventListener('click', incHandler); // safe-remove in case already attached
+          btn.addEventListener('click', incHandler);
+        });
+        container.querySelectorAll('.dec').forEach(btn => {
+          btn.removeEventListener('click', decHandler);
+          btn.addEventListener('click', decHandler);
+        });
+      }
+
+      function incHandler(e) {
+        const input = e.currentTarget.parentElement.querySelector('.room-count');
+        if (!input) return;
+        input.value = Math.max(parseInt(input.value || '0') + 1, 1);
+      }
+      function decHandler(e) {
+        const input = e.currentTarget.parentElement.querySelector('.room-count');
+        if (!input) return;
+        const val = Math.max(parseInt(input.value || '0') - 1, 1);
+        input.value = val;
+      }
+
+      // Attach handlers to initial counters
+      attachCounterHandlers(document.getElementById('roomContainer'));
+
+      // Add room logic - clones the room-line and attaches handlers to its buttons
+      const addRoomBtn = document.getElementById('addRoom');
+      addRoomBtn.addEventListener('click', () => {
         const container = document.getElementById('roomContainer');
         const line = document.createElement('div');
         line.classList.add('room-line');
@@ -323,22 +366,41 @@ document.addEventListener('DOMContentLoaded', () => {
           </select>
           <div class="counter">
             <button type="button" class="dec">-</button>
-            <input type="number" value="1" min="1" style="width:60px;">
+            <input type="number" value="1" min="1" class="room-count" style="width:60px;">
             <button type="button" class="inc">+</button>
           </div>
         `;
         container.appendChild(line);
+        // attach handlers to the newly added line
+        attachCounterHandlers(line);
       });
 
-      // Increment/decrement logic for guest count
-      document.getElementById('incGuest').addEventListener('click', () => {
-        const guestInput = document.getElementById('guestCount');
-        guestInput.value = parseInt(guestInput.value) + 1;
-      });
-      document.getElementById('decGuest').addEventListener('click', () => {
-        const guestInput = document.getElementById('guestCount');
-        if (guestInput.value > 1) guestInput.value = parseInt(guestInput.value) - 1;
-      });
+      // Guest inc/dec handlers
+      const incGuest = document.getElementById('incGuest');
+      const decGuest = document.getElementById('decGuest');
+      if (incGuest) {
+        incGuest.addEventListener('click', () => {
+          const guestInput = document.getElementById('guestCount');
+          guestInput.value = parseInt(guestInput.value || '0') + 1;
+        });
+      }
+      if (decGuest) {
+        decGuest.addEventListener('click', () => {
+          const guestInput = document.getElementById('guestCount');
+          if (parseInt(guestInput.value || '0') > 1) {
+            guestInput.value = parseInt(guestInput.value || '0') - 1;
+          }
+        });
+      }
+
+      // cleanup function to remove modal and listeners
+      function cleanupModal() {
+        // remove modal node
+        if (modal && modal.parentElement) modal.parentElement.removeChild(modal);
+        // remove esc handler
+        document.removeEventListener('keydown', escHandler);
+        // remove any other attached handlers (they were closures, removing modal is enough)
+      }
     }
   }
 
